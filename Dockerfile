@@ -8,16 +8,13 @@ RUN npm install
 COPY tsconfig*.json ./
 COPY src ./src
 COPY prisma ./prisma
-COPY .env.production ./.env
 
-
-# Generate Prisma client (safe, doesn’t need DB)
-RUN npm run pg
+RUN npx prisma generate
 RUN npm run build
 
 
 # ---------- Runtime ----------
-FROM node:18-alpine AS app
+FROM node:18-alpine
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
@@ -27,5 +24,4 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 4001
 
-# Run migrations after env is loaded, then start server
-CMD npx prisma migrate deploy && npm run start
+CMD sh -c "npx prisma migrate deploy && node dist/main.js"

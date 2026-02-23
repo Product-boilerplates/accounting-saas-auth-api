@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../errors/AppError";
 import { ValidationError } from "../errors";
+import { AppError } from "../errors/AppError";
 import { ResponseHandler } from "../utils/responseHandler";
 
 export type AsyncRequestHandler = (
@@ -15,7 +15,6 @@ export class BaseController {
       try {
         await fn(req, res, next);
       } catch (error: unknown) {
-        // 🔥 Always log raw error (VERY IMPORTANT)
         console.error("[Controller Error]", {
           path: req.path,
           method: req.method,
@@ -47,8 +46,9 @@ export class BaseController {
           (error as any).code === "P2002"
         ) {
           return next(
-            new AppError("Duplicate entry", 409, {
-              fields: (error as any).meta?.target,
+            new AppError("Duplicate entry", {
+              statusCode: 409,
+              details: { fields: (error as any).meta?.target },
             }),
           );
         }
@@ -58,7 +58,10 @@ export class BaseController {
           error instanceof Error ? error.message : "Something went wrong";
 
         return next(
-          new AppError(message, 500, null, "INTERNAL_SERVER_ERROR", false),
+          new AppError(message, {
+            statusCode: 500,
+            errorCode: "INTERNAL_SERVER_ERROR",
+          }),
         );
       }
     };

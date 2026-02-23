@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import jwtUtils from "../../core/utils/jwt.utils";
-import { prisma } from "../../prisma/client";
+import { prisma } from "../database";
 
 export const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;

@@ -1,43 +1,50 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
+/**
+ * *=======================**
+ * ====== Module ==========
+ * *=======================*
+ */
+
 // User Models
+
 model User {
-    id                   String         @id @default(cuid())
-    name                 String?
-    mobile               String?
-    email                String         @unique
-    username             String         @unique
-    password_hash        String
-    verification_token   String?
-    verification_expires DateTime?
-    two_fa_enabled       Boolean        @default(false)
-    status               UserStatus     @default(PENDING_VERIFICATION)
-    created_at           DateTime       @default(now())
-    updated_at           DateTime       @updatedAt
-    roles                UserRole[]
-    refresh_tokens       RefreshToken[]
+  id                   String         @id @default(cuid())
+  name                 String?
+  mobile               String?
+  email                String         @unique
+  username             String         @unique
+  password_hash        String
+  verification_token   String?
+  verification_expires DateTime?
+  two_fa_enabled       Boolean        @default(false)
+  status               UserStatus     @default(PENDING_VERIFICATION)
+  created_at           DateTime       @default(now())
+  updated_at           DateTime       @updatedAt
+  roles                UserRole[]
+  refresh_tokens       RefreshToken[]
 }
 
 enum UserStatus {
-    UNVERIFIED
-    PENDING_VERIFICATION
-    ACTIVE
-    ONLINE
-    OFFLINE
-    AWAY
-    SUSPENDED
-    BANNED
-    RESTRICTED
-    INACTIVE
-    DELETED
-    ARCHIVED
+  UNVERIFIED
+  PENDING_VERIFICATION
+  ACTIVE
+  ONLINE
+  OFFLINE
+  AWAY
+  SUSPENDED
+  BANNED
+  RESTRICTED
+  INACTIVE
+  DELETED
+  ARCHIVED
 }
 
 // Role Models
@@ -48,29 +55,24 @@ enum PermissionAction {
   DELETE
 }
 
-
-
-
-
 model Role {
-    id          String           @id @default(cuid())
-    name        String           @unique
-    description String?
-    permissions RolePermission[]
-    users       UserRole[]
-    service_roles ServiceRole[]
+  id            String           @id @default(cuid())
+  name          String           @unique
+  description   String?
+  permissions   RolePermission[]
+  users         UserRole[]
+  service_roles ServiceRole[]
 }
 
 model Permission {
-  id        String @id @default(uuid())
-  resource  String // e.g. "booking", "flight", "user"
-  action    PermissionAction
+  id       String           @id @default(uuid())
+  resource String // e.g. "booking", "flight", "user"
+  action   PermissionAction
 
-  roles     RolePermission[]
+  roles RolePermission[]
 
   @@unique([resource, action])
 }
-
 
 model UserRole {
   user_id String
@@ -82,7 +84,6 @@ model UserRole {
   @@id([user_id, role_id])
 }
 
-
 model RolePermission {
   role_id       String
   permission_id String
@@ -93,39 +94,44 @@ model RolePermission {
   @@id([role_id, permission_id])
 }
 
-
 model RefreshToken {
-    id             String   @id @default(cuid())
-    token_hash     String   @unique
-    user_id        String
-    revoked        Boolean  @default(false)
-    created_at     DateTime @default(now())
-    device_id      String?
-    device_name    String?
-    replaced_by_id String?
-    expires_at     DateTime
-    user           User     @relation(fields: [user_id], references: [id])
+  id             String   @id @default(cuid())
+  token_hash     String   @unique
+  user_id        String
+  revoked        Boolean  @default(false)
+  created_at     DateTime @default(now())
+  device_id      String?
+  device_name    String?
+  replaced_by_id String?
+  expires_at     DateTime
+  user           User     @relation(fields: [user_id], references: [id])
 }
 
 // Service Models
 model ServiceClient {
-    id                 String        @id @default(cuid())
-    client_id          String        @unique
-    client_secret_hash String
-    name               String
-    description        String?
-    is_active          Boolean       @default(true)
-    created_at         DateTime      @default(now())
-    updated_at         DateTime      @updatedAt
-    roles              ServiceRole[]
+  id                 String        @id @default(cuid())
+  client_id          String        @unique
+  client_secret_hash String
+  name               String
+  description        String?
+  is_active          Boolean       @default(true)
+  created_at         DateTime      @default(now())
+  updated_at         DateTime      @updatedAt
+  roles              ServiceRole[]
 }
 
 model ServiceRole {
-    id               String        @id @default(cuid())
-    service_client   ServiceClient @relation(fields: [service_client_id], references: [id])
-    service_client_id String
-    role             Role          @relation(fields: [role_id], references: [id])
-    role_id          String
+  id                String        @id @default(cuid())
+  service_client    ServiceClient @relation(fields: [service_client_id], references: [id])
+  service_client_id String
+  role              Role          @relation(fields: [role_id], references: [id])
+  role_id           String
 
-    @@unique([service_client_id, role_id])
+  @@unique([service_client_id, role_id])
 }
+
+/**
+ * *======================**
+ * ====== Enums ==========
+ * *======================*
+ */

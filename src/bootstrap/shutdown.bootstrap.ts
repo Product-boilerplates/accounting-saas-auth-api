@@ -1,6 +1,6 @@
 import { Server } from "http";
-import { prisma } from "../prisma/client";
 import { logger } from "../core/utils/logger";
+import { prisma } from "../core/database";
 
 export const registerShutdown = (server: Server) => {
   const shutdown = async (signal: string) => {

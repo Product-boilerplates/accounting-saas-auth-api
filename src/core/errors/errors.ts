@@ -1,93 +1,6 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { ZodError, ZodIssue } from "zod";
-import { logger } from "../utils/logger";
-
-type ErrorDetails = Record<string, unknown> | unknown[] | string | undefined;
-
-export class AppError extends Error {
-  public readonly statusCode: number;
-  public readonly isOperational: boolean;
-  public readonly details: ErrorDetails;
-  public readonly code: string;
-  public readonly timestamp: Date;
-  public readonly context?: Record<string, unknown>;
-
-  constructor(
-    message: string,
-    statusCode: number = 400,
-    isOperational: boolean = true,
-    details: ErrorDetails = undefined,
-    code: string = "APPLICATION_ERROR",
-    context?: Record<string, unknown>
-  ) {
-    super(message);
-
-    // Ensure proper prototype chain
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    // Standard error properties
-    this.name = this.constructor.name;
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
-    this.details = details;
-    this.code = code;
-    this.timestamp = new Date();
-    this.context = context;
-
-    // Capture stack trace (excluding constructor call)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-
-  public toJSON(): Record<string, unknown> {
-    return {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-      code: this.code,
-      timestamp: this.timestamp.toISOString(),
-      isOperational: this.isOperational,
-      ...(this.details && { details: this.details }),
-      ...(process.env.NODE_ENV !== "production" && {
-        stack: this.stack,
-        context: this.context,
-      }),
-    };
-  }
-
-  public toString(): string {
-    return `[${this.timestamp.toISOString()}] ${this.name} (${this.code}): ${
-      this.message
-    }`;
-  }
-
-  public static fromError(
-    error: Error,
-    overrides: Partial<
-      Pick<
-        AppError,
-        "statusCode" | "isOperational" | "details" | "code" | "context"
-      >
-    > = {}
-  ): AppError {
-    return new AppError(
-      error.message,
-      overrides.statusCode || 500,
-      overrides.isOperational ?? false,
-      overrides.details || error.stack,
-      overrides.code || "INTERNAL_ERROR",
-      overrides.context
-    );
-  }
-
-  public static logError(error: AppError): void {
-    logger.error(`[AppError] ❌ ${error.toString()}`, {
-      details: error.details,
-      context: error.context,
-    });
-  }
-}
+import { AppError, ErrorDetails } from "./AppError";
 
 export class ValidationError extends AppError {
   public readonly issues: ZodIssue[];
@@ -98,17 +11,18 @@ export class ValidationError extends AppError {
 
   constructor(issues: ZodIssue[] | ZodError) {
     const parsedIssues = issues instanceof ZodError ? issues.issues : issues;
+
     const flattened = issues instanceof ZodError ? issues.flatten() : null;
 
-    super(
-      "Validation failed",
-      400,
-      true,
-      ValidationError.transformIssuesToDetails(parsedIssues),
-      "VALIDATION_ERROR"
-    );
+    super("Validation failed", {
+      statusCode: 400,
+      errorCode: "VALIDATION_ERROR",
+      details: ValidationError.transformIssuesToDetails(parsedIssues),
+      isOperational: true,
+    });
 
     this.issues = parsedIssues;
+
     this.flattenedErrors = flattened || {
       fieldErrors: ValidationError.getFieldErrors(parsedIssues),
       formErrors: ValidationError.getFormErrors(parsedIssues),
@@ -207,7 +121,7 @@ export class DatabaseError extends AppError {
     P2026: "Unsupported feature",
     P2027: "Multiple errors occurred",
     P2028: "Transaction API error",
-    P2030: "Cannot find fulltext index",
+    P2030: "Cannot find full text index",
     P2033: "Numeric value out of range",
     P2034: "Transaction failed",
   };
@@ -215,20 +129,23 @@ export class DatabaseError extends AppError {
   constructor(error: PrismaClientKnownRequestError) {
     const message = DatabaseError.getErrorMessage(error);
     const details = DatabaseError.getErrorDetails(error);
+    const statusCode = DatabaseError.getStatusCode(error);
 
-    super(
-      message,
-      DatabaseError.getStatusCode(error),
-      true, // Database errors are typically operational
+    super(message, {
+      statusCode,
+      errorCode: error.code || "DATABASE_ERROR",
       details,
-      error.code || "DATABASE_ERROR"
-    );
+      isOperational: true,
+      context: {
+        prismaCode: error.code,
+        meta: error.meta,
+      },
+    });
 
     this.prismaCode = error.code;
     this.meta = error.meta;
     this.target = error.meta?.target as string[] | undefined;
 
-    // Preserve stack trace
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, DatabaseError);
     }
@@ -261,7 +178,7 @@ export class DatabaseError extends AppError {
   }
 
   private static getErrorDetails(
-    error: PrismaClientKnownRequestError
+    error: PrismaClientKnownRequestError,
   ): ErrorDetails[] {
     const details: ErrorDetails[] = [
       {
@@ -275,7 +192,7 @@ export class DatabaseError extends AppError {
       details.push({
         field: "target",
         message: `Affected fields: ${(error.meta.target as string[]).join(
-          ", "
+          ", ",
         )}`,
         code: "TARGET_FIELDS",
       });
@@ -297,7 +214,12 @@ export class RateLimitError extends AppError {
   public readonly resetTime: Date;
 
   constructor(resetTime: Date) {
-    super("Too many requests", 429, true, { resetTime }, "RATE_LIMIT_EXCEEDED");
+    super("Too many requests", {
+      statusCode: 429,
+      isOperational: true,
+      details: { resetTime },
+      errorCode: "RATE_LIMIT_EXCEEDED",
+    });
     this.resetTime = resetTime;
   }
 }
@@ -306,44 +228,56 @@ export class NotFoundError extends AppError {
   constructor(
     resource: string,
     identifier: string | number,
-    details?: ErrorDetails
+    details?: ErrorDetails,
   ) {
-    super(
-      `${resource} with ID ${identifier} not found`,
-      404,
-      true,
+    super(`${resource} with ID ${identifier} not found`, {
+      statusCode: 404,
+      errorCode: "NOT_FOUND",
       details,
-      resource === "Route" ? "ROUTE_NOT_FOUND" : "RESOURCE_NOT_FOUND",
-      { resource, identifier }
-    );
+    });
   }
 }
 
 export class AuthenticationError extends AppError {
   constructor(message: string = "Authentication failed") {
-    super(message, 401, true, undefined, "AUTHENTICATION_ERROR");
+    super(message, {
+      statusCode: 401,
+      isOperational: true,
+      errorCode: "AUTHENTICATION_ERROR",
+    });
   }
 }
 
 export const throwNotFound = (entity: string, id: string | number) => {
-  throw new AppError(`${entity} with ID ${id} does not exist`, 404);
+  throw new AppError(`${entity} with ID ${id} does not exist`, {
+    statusCode: 404,
+  });
 };
 
 export const throwValidation = (message: string) => {
-  throw new AppError(message, 400);
+  throw new AppError(message, {
+    statusCode: 404,
+    errorCode: "VALIDATION_ERROR",
+  });
 };
 
 export const throwUnauthorized = (message = "Unauthorized") => {
-  throw new AppError(message, 401);
+  throw new AppError(message, {
+    statusCode: 401,
+    errorCode: "AUTH_ERROR",
+  });
 };
 
 export const throwUnHandle = (message = "Server error") => {
-  throw new AppError(message, 500);
+  throw new AppError(message, {
+    statusCode: 500,
+    errorCode: "INTERNAL_SERVER_ERROR",
+  });
 };
 
 export enum RedisErrorCodes {
   CONNECTION_REFUSED = "ECONNREFUSED",
   MAX_RETRIES = "MAX_RETRIES_PER_REQUEST_FAILED",
-  NO_AUTH = "NOAUTH",
+  NO_AUTH = "NO_AUTH",
   BUSY = "BUSY",
 }

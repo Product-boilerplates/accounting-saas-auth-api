@@ -3,8 +3,8 @@ import { hashSync } from "bcrypt";
 export const users = [
   {
     name: "Super Admin",
-    email: "superadmin@example.com",
-    username: "superadmin",
+    email: "super_admin@example.com",
+    username: "super_admin",
     password_hash: hashSync("admin123", 12),
     status: "ACTIVE" as const,
     roles: ["super_admin"],

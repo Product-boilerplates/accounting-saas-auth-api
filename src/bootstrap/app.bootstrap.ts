@@ -1,8 +1,8 @@
 import { Application } from "express";
 import { createApp } from "../app/app";
+import { registerHealthCheck } from "../app/health";
 import { registerMiddlewares } from "../app/middlewares";
 import { registerRoutes } from "../app/routes";
-import { registerHealthCheck } from "../app/health";
 import { AppError } from "../core/errors/AppError";
 import { errorHandler } from "../core/errors/errorHandler";
 
@@ -15,11 +15,10 @@ export const bootstrapApp = (): Application => {
 
   app.use((req, _res, next) => {
     next(
-      new AppError(
-        `Can't find ${req.originalUrl} on this server!`,
-        404,
-        "NOT_FOUND"
-      )
+      new AppError(`Can't find ${req.originalUrl} on this server!`, {
+        statusCode: 404,
+        errorCode: "NOT_FOUND",
+      }),
     );
   });
 
