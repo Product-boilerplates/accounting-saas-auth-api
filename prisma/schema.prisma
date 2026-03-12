@@ -31,6 +31,18 @@ model User {
   roles                UserRole[]
   refresh_tokens       RefreshToken[]
   authOtps             AuthOtp[]
+  tenantUsers          TenantUser[]
+}
+
+model TenantUser {
+  tenant_id String
+  user_id   String
+  role_id   String
+
+  user User @relation(fields: [user_id], references: [id])
+  role Role @relation(fields: [role_id], references: [id])
+
+  @@id([tenant_id, user_id])
 }
 
 enum UserStatus {
@@ -63,6 +75,7 @@ model Role {
   permissions   RolePermission[]
   users         UserRole[]
   service_roles ServiceRole[]
+  tenantUsers   TenantUser[]
 }
 
 model Permission {
