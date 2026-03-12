@@ -1,4 +1,5 @@
 import { BaseService } from "../../../core/base";
+import { AppError } from "../../../core/errors";
 import { authConfig } from "../auth.config";
 import { randomToken, sha256 } from "../utils/hash.util";
 
@@ -26,7 +27,10 @@ export class RefreshTokenService extends BaseService {
       });
 
       if (!record || record.revoked || record.expires_at < new Date())
-        throw new Error("Invalid refresh token");
+        throw new AppError("Invalid refresh token", {
+          statusCode: 401,
+          errorCode: "UNAUTHORIZED",
+        });
 
       await tx.refreshToken.update({
         where: { id: record.id },

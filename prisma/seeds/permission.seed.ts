@@ -1,3 +1,4 @@
+import { permissionsData } from "../../src/shared/permissions";
 import { prisma } from "../../src/core/database";
 
 async function permissionSeed() {
@@ -6,26 +7,9 @@ async function permissionSeed() {
   // -------------------------
   // Permissions
   // -------------------------
-  const permissionsData = [
-    { resource: "user", action: "CREATE" as const },
-    { resource: "user", action: "READ" as const },
-    { resource: "user", action: "UPDATE" as const },
-    { resource: "user", action: "DELETE" as const },
-    { resource: "role", action: "CREATE" as const },
-    { resource: "role", action: "READ" as const },
-    { resource: "role", action: "UPDATE" as const },
-    { resource: "role", action: "DELETE" as const },
-    { resource: "permission", action: "READ" as const },
-    { resource: "system", action: "CREATE" as const },
-    { resource: "system", action: "READ" as const },
-    { resource: "content", action: "CREATE" as const },
-    { resource: "content", action: "READ" as const },
-    { resource: "content", action: "UPDATE" as const },
-    { resource: "content", action: "DELETE" as const },
-  ];
 
   const permissions = await Promise.all(
-    permissionsData.map((perm) =>
+    permissionsData.map((perm: any) =>
       prisma.permission.upsert({
         where: {
           resource_action: {
@@ -35,8 +19,8 @@ async function permissionSeed() {
         },
         update: {},
         create: perm,
-      })
-    )
+      }),
+    ),
   );
 
   // -------------------------
@@ -88,8 +72,8 @@ async function permissionSeed() {
           role_id: superAdminRole.id,
           permission_id: perm.id,
         },
-      })
-    )
+      }),
+    ),
   );
 
   // ADMIN → limited permissions
@@ -98,7 +82,7 @@ async function permissionSeed() {
       (p.resource === "user" &&
         ["CREATE", "READ", "UPDATE"].includes(p.action)) ||
       (p.resource === "role" && p.action === "READ") ||
-      (p.resource === "permission" && p.action === "READ")
+      (p.resource === "permission" && p.action === "READ"),
   );
 
   await Promise.all(
@@ -115,8 +99,8 @@ async function permissionSeed() {
           role_id: adminRole.id,
           permission_id: perm.id,
         },
-      })
-    )
+      }),
+    ),
   );
 
   console.log("✅ RBAC Seed completed.");

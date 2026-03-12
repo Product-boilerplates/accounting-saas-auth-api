@@ -53,6 +53,12 @@ export type ServiceClient = $Result.DefaultSelection<Prisma.$ServiceClientPayloa
  * 
  */
 export type ServiceRole = $Result.DefaultSelection<Prisma.$ServiceRolePayload>
+/**
+ * Model AuthOtp
+ * *
+ *  * Auth Otp
+ */
+export type AuthOtp = $Result.DefaultSelection<Prisma.$AuthOtpPayload>
 
 /**
  * Enums
@@ -85,6 +91,15 @@ export const PermissionAction: {
 
 export type PermissionAction = (typeof PermissionAction)[keyof typeof PermissionAction]
 
+
+export const OtpType: {
+  LOGIN_2FA: 'LOGIN_2FA',
+  EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
+export type OtpType = (typeof OtpType)[keyof typeof OtpType]
+
 }
 
 export type UserStatus = $Enums.UserStatus
@@ -94,6 +109,10 @@ export const UserStatus: typeof $Enums.UserStatus
 export type PermissionAction = $Enums.PermissionAction
 
 export const PermissionAction: typeof $Enums.PermissionAction
+
+export type OtpType = $Enums.OtpType
+
+export const OtpType: typeof $Enums.OtpType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -291,6 +310,16 @@ export class PrismaClient<
     * ```
     */
   get serviceRole(): Prisma.ServiceRoleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.authOtp`: Exposes CRUD operations for the **AuthOtp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AuthOtps
+    * const authOtps = await prisma.authOtp.findMany()
+    * ```
+    */
+  get authOtp(): Prisma.AuthOtpDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -732,7 +761,8 @@ export namespace Prisma {
     RolePermission: 'RolePermission',
     RefreshToken: 'RefreshToken',
     ServiceClient: 'ServiceClient',
-    ServiceRole: 'ServiceRole'
+    ServiceRole: 'ServiceRole',
+    AuthOtp: 'AuthOtp'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -748,7 +778,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken" | "serviceClient" | "serviceRole"
+      modelProps: "user" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken" | "serviceClient" | "serviceRole" | "authOtp"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1344,6 +1374,80 @@ export namespace Prisma {
           }
         }
       }
+      AuthOtp: {
+        payload: Prisma.$AuthOtpPayload<ExtArgs>
+        fields: Prisma.AuthOtpFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AuthOtpFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AuthOtpFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          findFirst: {
+            args: Prisma.AuthOtpFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AuthOtpFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          findMany: {
+            args: Prisma.AuthOtpFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>[]
+          }
+          create: {
+            args: Prisma.AuthOtpCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          createMany: {
+            args: Prisma.AuthOtpCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AuthOtpCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>[]
+          }
+          delete: {
+            args: Prisma.AuthOtpDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          update: {
+            args: Prisma.AuthOtpUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          deleteMany: {
+            args: Prisma.AuthOtpDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AuthOtpUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AuthOtpUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>[]
+          }
+          upsert: {
+            args: Prisma.AuthOtpUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthOtpPayload>
+          }
+          aggregate: {
+            args: Prisma.AuthOtpAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAuthOtp>
+          }
+          groupBy: {
+            args: Prisma.AuthOtpGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AuthOtpGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AuthOtpCountArgs<ExtArgs>
+            result: $Utils.Optional<AuthOtpCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1460,6 +1564,7 @@ export namespace Prisma {
     refreshToken?: RefreshTokenOmit
     serviceClient?: ServiceClientOmit
     serviceRole?: ServiceRoleOmit
+    authOtp?: AuthOtpOmit
   }
 
   /* Types for Logging */
@@ -1542,11 +1647,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     roles: number
     refresh_tokens: number
+    authOtps: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | UserCountOutputTypeCountRolesArgs
     refresh_tokens?: boolean | UserCountOutputTypeCountRefresh_tokensArgs
+    authOtps?: boolean | UserCountOutputTypeCountAuthOtpsArgs
   }
 
   // Custom InputTypes
@@ -1572,6 +1679,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRefresh_tokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RefreshTokenWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuthOtpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuthOtpWhereInput
   }
 
 
@@ -1912,6 +2026,7 @@ export namespace Prisma {
     updated_at?: boolean
     roles?: boolean | User$rolesArgs<ExtArgs>
     refresh_tokens?: boolean | User$refresh_tokensArgs<ExtArgs>
+    authOtps?: boolean | User$authOtpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1964,6 +2079,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | User$rolesArgs<ExtArgs>
     refresh_tokens?: boolean | User$refresh_tokensArgs<ExtArgs>
+    authOtps?: boolean | User$authOtpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1974,6 +2090,7 @@ export namespace Prisma {
     objects: {
       roles: Prisma.$UserRolePayload<ExtArgs>[]
       refresh_tokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+      authOtps: Prisma.$AuthOtpPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2384,6 +2501,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refresh_tokens<T extends User$refresh_tokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refresh_tokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    authOtps<T extends User$authOtpsArgs<ExtArgs> = {}>(args?: Subset<T, User$authOtpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2858,6 +2976,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
+  }
+
+  /**
+   * User.authOtps
+   */
+  export type User$authOtpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    where?: AuthOtpWhereInput
+    orderBy?: AuthOtpOrderByWithRelationInput | AuthOtpOrderByWithRelationInput[]
+    cursor?: AuthOtpWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AuthOtpScalarFieldEnum | AuthOtpScalarFieldEnum[]
   }
 
   /**
@@ -10337,6 +10479,1137 @@ export namespace Prisma {
 
 
   /**
+   * Model AuthOtp
+   */
+
+  export type AggregateAuthOtp = {
+    _count: AuthOtpCountAggregateOutputType | null
+    _avg: AuthOtpAvgAggregateOutputType | null
+    _sum: AuthOtpSumAggregateOutputType | null
+    _min: AuthOtpMinAggregateOutputType | null
+    _max: AuthOtpMaxAggregateOutputType | null
+  }
+
+  export type AuthOtpAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type AuthOtpSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type AuthOtpMinAggregateOutputType = {
+    id: string | null
+    user_id: string | null
+    type: $Enums.OtpType | null
+    otp_hash: string | null
+    attempts: number | null
+    expires_at: Date | null
+    consumed_at: Date | null
+    created_at: Date | null
+  }
+
+  export type AuthOtpMaxAggregateOutputType = {
+    id: string | null
+    user_id: string | null
+    type: $Enums.OtpType | null
+    otp_hash: string | null
+    attempts: number | null
+    expires_at: Date | null
+    consumed_at: Date | null
+    created_at: Date | null
+  }
+
+  export type AuthOtpCountAggregateOutputType = {
+    id: number
+    user_id: number
+    type: number
+    otp_hash: number
+    attempts: number
+    expires_at: number
+    consumed_at: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type AuthOtpAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type AuthOtpSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type AuthOtpMinAggregateInputType = {
+    id?: true
+    user_id?: true
+    type?: true
+    otp_hash?: true
+    attempts?: true
+    expires_at?: true
+    consumed_at?: true
+    created_at?: true
+  }
+
+  export type AuthOtpMaxAggregateInputType = {
+    id?: true
+    user_id?: true
+    type?: true
+    otp_hash?: true
+    attempts?: true
+    expires_at?: true
+    consumed_at?: true
+    created_at?: true
+  }
+
+  export type AuthOtpCountAggregateInputType = {
+    id?: true
+    user_id?: true
+    type?: true
+    otp_hash?: true
+    attempts?: true
+    expires_at?: true
+    consumed_at?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type AuthOtpAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuthOtp to aggregate.
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthOtps to fetch.
+     */
+    orderBy?: AuthOtpOrderByWithRelationInput | AuthOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AuthOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AuthOtps
+    **/
+    _count?: true | AuthOtpCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AuthOtpAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AuthOtpSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuthOtpMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuthOtpMaxAggregateInputType
+  }
+
+  export type GetAuthOtpAggregateType<T extends AuthOtpAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuthOtp]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuthOtp[P]>
+      : GetScalarType<T[P], AggregateAuthOtp[P]>
+  }
+
+
+
+
+  export type AuthOtpGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuthOtpWhereInput
+    orderBy?: AuthOtpOrderByWithAggregationInput | AuthOtpOrderByWithAggregationInput[]
+    by: AuthOtpScalarFieldEnum[] | AuthOtpScalarFieldEnum
+    having?: AuthOtpScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuthOtpCountAggregateInputType | true
+    _avg?: AuthOtpAvgAggregateInputType
+    _sum?: AuthOtpSumAggregateInputType
+    _min?: AuthOtpMinAggregateInputType
+    _max?: AuthOtpMaxAggregateInputType
+  }
+
+  export type AuthOtpGroupByOutputType = {
+    id: string
+    user_id: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts: number
+    expires_at: Date
+    consumed_at: Date | null
+    created_at: Date
+    _count: AuthOtpCountAggregateOutputType | null
+    _avg: AuthOtpAvgAggregateOutputType | null
+    _sum: AuthOtpSumAggregateOutputType | null
+    _min: AuthOtpMinAggregateOutputType | null
+    _max: AuthOtpMaxAggregateOutputType | null
+  }
+
+  type GetAuthOtpGroupByPayload<T extends AuthOtpGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AuthOtpGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuthOtpGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuthOtpGroupByOutputType[P]>
+            : GetScalarType<T[P], AuthOtpGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuthOtpSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    type?: boolean
+    otp_hash?: boolean
+    attempts?: boolean
+    expires_at?: boolean
+    consumed_at?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["authOtp"]>
+
+  export type AuthOtpSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    type?: boolean
+    otp_hash?: boolean
+    attempts?: boolean
+    expires_at?: boolean
+    consumed_at?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["authOtp"]>
+
+  export type AuthOtpSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    type?: boolean
+    otp_hash?: boolean
+    attempts?: boolean
+    expires_at?: boolean
+    consumed_at?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["authOtp"]>
+
+  export type AuthOtpSelectScalar = {
+    id?: boolean
+    user_id?: boolean
+    type?: boolean
+    otp_hash?: boolean
+    attempts?: boolean
+    expires_at?: boolean
+    consumed_at?: boolean
+    created_at?: boolean
+  }
+
+  export type AuthOtpOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "type" | "otp_hash" | "attempts" | "expires_at" | "consumed_at" | "created_at", ExtArgs["result"]["authOtp"]>
+  export type AuthOtpInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AuthOtpIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AuthOtpIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AuthOtpPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AuthOtp"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      user_id: string
+      type: $Enums.OtpType
+      otp_hash: string
+      attempts: number
+      expires_at: Date
+      consumed_at: Date | null
+      created_at: Date
+    }, ExtArgs["result"]["authOtp"]>
+    composites: {}
+  }
+
+  type AuthOtpGetPayload<S extends boolean | null | undefined | AuthOtpDefaultArgs> = $Result.GetResult<Prisma.$AuthOtpPayload, S>
+
+  type AuthOtpCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AuthOtpFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AuthOtpCountAggregateInputType | true
+    }
+
+  export interface AuthOtpDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AuthOtp'], meta: { name: 'AuthOtp' } }
+    /**
+     * Find zero or one AuthOtp that matches the filter.
+     * @param {AuthOtpFindUniqueArgs} args - Arguments to find a AuthOtp
+     * @example
+     * // Get one AuthOtp
+     * const authOtp = await prisma.authOtp.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AuthOtpFindUniqueArgs>(args: SelectSubset<T, AuthOtpFindUniqueArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AuthOtp that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AuthOtpFindUniqueOrThrowArgs} args - Arguments to find a AuthOtp
+     * @example
+     * // Get one AuthOtp
+     * const authOtp = await prisma.authOtp.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AuthOtpFindUniqueOrThrowArgs>(args: SelectSubset<T, AuthOtpFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuthOtp that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpFindFirstArgs} args - Arguments to find a AuthOtp
+     * @example
+     * // Get one AuthOtp
+     * const authOtp = await prisma.authOtp.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AuthOtpFindFirstArgs>(args?: SelectSubset<T, AuthOtpFindFirstArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuthOtp that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpFindFirstOrThrowArgs} args - Arguments to find a AuthOtp
+     * @example
+     * // Get one AuthOtp
+     * const authOtp = await prisma.authOtp.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AuthOtpFindFirstOrThrowArgs>(args?: SelectSubset<T, AuthOtpFindFirstOrThrowArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AuthOtps that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AuthOtps
+     * const authOtps = await prisma.authOtp.findMany()
+     * 
+     * // Get first 10 AuthOtps
+     * const authOtps = await prisma.authOtp.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const authOtpWithIdOnly = await prisma.authOtp.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AuthOtpFindManyArgs>(args?: SelectSubset<T, AuthOtpFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AuthOtp.
+     * @param {AuthOtpCreateArgs} args - Arguments to create a AuthOtp.
+     * @example
+     * // Create one AuthOtp
+     * const AuthOtp = await prisma.authOtp.create({
+     *   data: {
+     *     // ... data to create a AuthOtp
+     *   }
+     * })
+     * 
+     */
+    create<T extends AuthOtpCreateArgs>(args: SelectSubset<T, AuthOtpCreateArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AuthOtps.
+     * @param {AuthOtpCreateManyArgs} args - Arguments to create many AuthOtps.
+     * @example
+     * // Create many AuthOtps
+     * const authOtp = await prisma.authOtp.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AuthOtpCreateManyArgs>(args?: SelectSubset<T, AuthOtpCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AuthOtps and returns the data saved in the database.
+     * @param {AuthOtpCreateManyAndReturnArgs} args - Arguments to create many AuthOtps.
+     * @example
+     * // Create many AuthOtps
+     * const authOtp = await prisma.authOtp.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AuthOtps and only return the `id`
+     * const authOtpWithIdOnly = await prisma.authOtp.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AuthOtpCreateManyAndReturnArgs>(args?: SelectSubset<T, AuthOtpCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AuthOtp.
+     * @param {AuthOtpDeleteArgs} args - Arguments to delete one AuthOtp.
+     * @example
+     * // Delete one AuthOtp
+     * const AuthOtp = await prisma.authOtp.delete({
+     *   where: {
+     *     // ... filter to delete one AuthOtp
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AuthOtpDeleteArgs>(args: SelectSubset<T, AuthOtpDeleteArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AuthOtp.
+     * @param {AuthOtpUpdateArgs} args - Arguments to update one AuthOtp.
+     * @example
+     * // Update one AuthOtp
+     * const authOtp = await prisma.authOtp.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AuthOtpUpdateArgs>(args: SelectSubset<T, AuthOtpUpdateArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AuthOtps.
+     * @param {AuthOtpDeleteManyArgs} args - Arguments to filter AuthOtps to delete.
+     * @example
+     * // Delete a few AuthOtps
+     * const { count } = await prisma.authOtp.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AuthOtpDeleteManyArgs>(args?: SelectSubset<T, AuthOtpDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuthOtps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AuthOtps
+     * const authOtp = await prisma.authOtp.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AuthOtpUpdateManyArgs>(args: SelectSubset<T, AuthOtpUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuthOtps and returns the data updated in the database.
+     * @param {AuthOtpUpdateManyAndReturnArgs} args - Arguments to update many AuthOtps.
+     * @example
+     * // Update many AuthOtps
+     * const authOtp = await prisma.authOtp.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AuthOtps and only return the `id`
+     * const authOtpWithIdOnly = await prisma.authOtp.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AuthOtpUpdateManyAndReturnArgs>(args: SelectSubset<T, AuthOtpUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AuthOtp.
+     * @param {AuthOtpUpsertArgs} args - Arguments to update or create a AuthOtp.
+     * @example
+     * // Update or create a AuthOtp
+     * const authOtp = await prisma.authOtp.upsert({
+     *   create: {
+     *     // ... data to create a AuthOtp
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AuthOtp we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AuthOtpUpsertArgs>(args: SelectSubset<T, AuthOtpUpsertArgs<ExtArgs>>): Prisma__AuthOtpClient<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AuthOtps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpCountArgs} args - Arguments to filter AuthOtps to count.
+     * @example
+     * // Count the number of AuthOtps
+     * const count = await prisma.authOtp.count({
+     *   where: {
+     *     // ... the filter for the AuthOtps we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuthOtpCountArgs>(
+      args?: Subset<T, AuthOtpCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuthOtpCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AuthOtp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuthOtpAggregateArgs>(args: Subset<T, AuthOtpAggregateArgs>): Prisma.PrismaPromise<GetAuthOtpAggregateType<T>>
+
+    /**
+     * Group by AuthOtp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthOtpGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuthOtpGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuthOtpGroupByArgs['orderBy'] }
+        : { orderBy?: AuthOtpGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuthOtpGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuthOtpGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AuthOtp model
+   */
+  readonly fields: AuthOtpFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AuthOtp.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AuthOtpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AuthOtp model
+   */
+  interface AuthOtpFieldRefs {
+    readonly id: FieldRef<"AuthOtp", 'String'>
+    readonly user_id: FieldRef<"AuthOtp", 'String'>
+    readonly type: FieldRef<"AuthOtp", 'OtpType'>
+    readonly otp_hash: FieldRef<"AuthOtp", 'String'>
+    readonly attempts: FieldRef<"AuthOtp", 'Int'>
+    readonly expires_at: FieldRef<"AuthOtp", 'DateTime'>
+    readonly consumed_at: FieldRef<"AuthOtp", 'DateTime'>
+    readonly created_at: FieldRef<"AuthOtp", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AuthOtp findUnique
+   */
+  export type AuthOtpFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which AuthOtp to fetch.
+     */
+    where: AuthOtpWhereUniqueInput
+  }
+
+  /**
+   * AuthOtp findUniqueOrThrow
+   */
+  export type AuthOtpFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which AuthOtp to fetch.
+     */
+    where: AuthOtpWhereUniqueInput
+  }
+
+  /**
+   * AuthOtp findFirst
+   */
+  export type AuthOtpFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which AuthOtp to fetch.
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthOtps to fetch.
+     */
+    orderBy?: AuthOtpOrderByWithRelationInput | AuthOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuthOtps.
+     */
+    cursor?: AuthOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuthOtps.
+     */
+    distinct?: AuthOtpScalarFieldEnum | AuthOtpScalarFieldEnum[]
+  }
+
+  /**
+   * AuthOtp findFirstOrThrow
+   */
+  export type AuthOtpFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which AuthOtp to fetch.
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthOtps to fetch.
+     */
+    orderBy?: AuthOtpOrderByWithRelationInput | AuthOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuthOtps.
+     */
+    cursor?: AuthOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuthOtps.
+     */
+    distinct?: AuthOtpScalarFieldEnum | AuthOtpScalarFieldEnum[]
+  }
+
+  /**
+   * AuthOtp findMany
+   */
+  export type AuthOtpFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which AuthOtps to fetch.
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthOtps to fetch.
+     */
+    orderBy?: AuthOtpOrderByWithRelationInput | AuthOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AuthOtps.
+     */
+    cursor?: AuthOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthOtps.
+     */
+    skip?: number
+    distinct?: AuthOtpScalarFieldEnum | AuthOtpScalarFieldEnum[]
+  }
+
+  /**
+   * AuthOtp create
+   */
+  export type AuthOtpCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AuthOtp.
+     */
+    data: XOR<AuthOtpCreateInput, AuthOtpUncheckedCreateInput>
+  }
+
+  /**
+   * AuthOtp createMany
+   */
+  export type AuthOtpCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AuthOtps.
+     */
+    data: AuthOtpCreateManyInput | AuthOtpCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AuthOtp createManyAndReturn
+   */
+  export type AuthOtpCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * The data used to create many AuthOtps.
+     */
+    data: AuthOtpCreateManyInput | AuthOtpCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuthOtp update
+   */
+  export type AuthOtpUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AuthOtp.
+     */
+    data: XOR<AuthOtpUpdateInput, AuthOtpUncheckedUpdateInput>
+    /**
+     * Choose, which AuthOtp to update.
+     */
+    where: AuthOtpWhereUniqueInput
+  }
+
+  /**
+   * AuthOtp updateMany
+   */
+  export type AuthOtpUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AuthOtps.
+     */
+    data: XOR<AuthOtpUpdateManyMutationInput, AuthOtpUncheckedUpdateManyInput>
+    /**
+     * Filter which AuthOtps to update
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * Limit how many AuthOtps to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuthOtp updateManyAndReturn
+   */
+  export type AuthOtpUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * The data used to update AuthOtps.
+     */
+    data: XOR<AuthOtpUpdateManyMutationInput, AuthOtpUncheckedUpdateManyInput>
+    /**
+     * Filter which AuthOtps to update
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * Limit how many AuthOtps to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuthOtp upsert
+   */
+  export type AuthOtpUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AuthOtp to update in case it exists.
+     */
+    where: AuthOtpWhereUniqueInput
+    /**
+     * In case the AuthOtp found by the `where` argument doesn't exist, create a new AuthOtp with this data.
+     */
+    create: XOR<AuthOtpCreateInput, AuthOtpUncheckedCreateInput>
+    /**
+     * In case the AuthOtp was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AuthOtpUpdateInput, AuthOtpUncheckedUpdateInput>
+  }
+
+  /**
+   * AuthOtp delete
+   */
+  export type AuthOtpDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+    /**
+     * Filter which AuthOtp to delete.
+     */
+    where: AuthOtpWhereUniqueInput
+  }
+
+  /**
+   * AuthOtp deleteMany
+   */
+  export type AuthOtpDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuthOtps to delete
+     */
+    where?: AuthOtpWhereInput
+    /**
+     * Limit how many AuthOtps to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuthOtp without action
+   */
+  export type AuthOtpDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthOtp
+     */
+    select?: AuthOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthOtp
+     */
+    omit?: AuthOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuthOtpInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10440,6 +11713,20 @@ export namespace Prisma {
   export type ServiceRoleScalarFieldEnum = (typeof ServiceRoleScalarFieldEnum)[keyof typeof ServiceRoleScalarFieldEnum]
 
 
+  export const AuthOtpScalarFieldEnum: {
+    id: 'id',
+    user_id: 'user_id',
+    type: 'type',
+    otp_hash: 'otp_hash',
+    attempts: 'attempts',
+    expires_at: 'expires_at',
+    consumed_at: 'consumed_at',
+    created_at: 'created_at'
+  };
+
+  export type AuthOtpScalarFieldEnum = (typeof AuthOtpScalarFieldEnum)[keyof typeof AuthOtpScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -10533,6 +11820,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'OtpType'
+   */
+  export type EnumOtpTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpType'>
+    
+
+
+  /**
+   * Reference to a field of type 'OtpType[]'
+   */
+  export type ListEnumOtpTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -10543,6 +11844,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -10567,6 +11882,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     roles?: UserRoleListRelationFilter
     refresh_tokens?: RefreshTokenListRelationFilter
+    authOtps?: AuthOtpListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10584,6 +11900,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     roles?: UserRoleOrderByRelationAggregateInput
     refresh_tokens?: RefreshTokenOrderByRelationAggregateInput
+    authOtps?: AuthOtpOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10604,6 +11921,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     roles?: UserRoleListRelationFilter
     refresh_tokens?: RefreshTokenListRelationFilter
+    authOtps?: AuthOtpListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -11021,6 +12339,78 @@ export namespace Prisma {
     role_id?: StringWithAggregatesFilter<"ServiceRole"> | string
   }
 
+  export type AuthOtpWhereInput = {
+    AND?: AuthOtpWhereInput | AuthOtpWhereInput[]
+    OR?: AuthOtpWhereInput[]
+    NOT?: AuthOtpWhereInput | AuthOtpWhereInput[]
+    id?: StringFilter<"AuthOtp"> | string
+    user_id?: StringFilter<"AuthOtp"> | string
+    type?: EnumOtpTypeFilter<"AuthOtp"> | $Enums.OtpType
+    otp_hash?: StringFilter<"AuthOtp"> | string
+    attempts?: IntFilter<"AuthOtp"> | number
+    expires_at?: DateTimeFilter<"AuthOtp"> | Date | string
+    consumed_at?: DateTimeNullableFilter<"AuthOtp"> | Date | string | null
+    created_at?: DateTimeFilter<"AuthOtp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type AuthOtpOrderByWithRelationInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    type?: SortOrder
+    otp_hash?: SortOrder
+    attempts?: SortOrder
+    expires_at?: SortOrder
+    consumed_at?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AuthOtpWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AuthOtpWhereInput | AuthOtpWhereInput[]
+    OR?: AuthOtpWhereInput[]
+    NOT?: AuthOtpWhereInput | AuthOtpWhereInput[]
+    user_id?: StringFilter<"AuthOtp"> | string
+    type?: EnumOtpTypeFilter<"AuthOtp"> | $Enums.OtpType
+    otp_hash?: StringFilter<"AuthOtp"> | string
+    attempts?: IntFilter<"AuthOtp"> | number
+    expires_at?: DateTimeFilter<"AuthOtp"> | Date | string
+    consumed_at?: DateTimeNullableFilter<"AuthOtp"> | Date | string | null
+    created_at?: DateTimeFilter<"AuthOtp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type AuthOtpOrderByWithAggregationInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    type?: SortOrder
+    otp_hash?: SortOrder
+    attempts?: SortOrder
+    expires_at?: SortOrder
+    consumed_at?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    _count?: AuthOtpCountOrderByAggregateInput
+    _avg?: AuthOtpAvgOrderByAggregateInput
+    _max?: AuthOtpMaxOrderByAggregateInput
+    _min?: AuthOtpMinOrderByAggregateInput
+    _sum?: AuthOtpSumOrderByAggregateInput
+  }
+
+  export type AuthOtpScalarWhereWithAggregatesInput = {
+    AND?: AuthOtpScalarWhereWithAggregatesInput | AuthOtpScalarWhereWithAggregatesInput[]
+    OR?: AuthOtpScalarWhereWithAggregatesInput[]
+    NOT?: AuthOtpScalarWhereWithAggregatesInput | AuthOtpScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AuthOtp"> | string
+    user_id?: StringWithAggregatesFilter<"AuthOtp"> | string
+    type?: EnumOtpTypeWithAggregatesFilter<"AuthOtp"> | $Enums.OtpType
+    otp_hash?: StringWithAggregatesFilter<"AuthOtp"> | string
+    attempts?: IntWithAggregatesFilter<"AuthOtp"> | number
+    expires_at?: DateTimeWithAggregatesFilter<"AuthOtp"> | Date | string
+    consumed_at?: DateTimeNullableWithAggregatesFilter<"AuthOtp"> | Date | string | null
+    created_at?: DateTimeWithAggregatesFilter<"AuthOtp"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name?: string | null
@@ -11036,6 +12426,7 @@ export namespace Prisma {
     updated_at?: Date | string
     roles?: UserRoleCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11053,6 +12444,7 @@ export namespace Prisma {
     updated_at?: Date | string
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11070,6 +12462,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11087,6 +12480,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -11506,6 +12900,82 @@ export namespace Prisma {
     role_id?: StringFieldUpdateOperationsInput | string
   }
 
+  export type AuthOtpCreateInput = {
+    id?: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutAuthOtpsInput
+  }
+
+  export type AuthOtpUncheckedCreateInput = {
+    id?: string
+    user_id: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type AuthOtpUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutAuthOtpsNestedInput
+  }
+
+  export type AuthOtpUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuthOtpCreateManyInput = {
+    id?: string
+    user_id: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type AuthOtpUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuthOtpUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11582,6 +13052,12 @@ export namespace Prisma {
     none?: RefreshTokenWhereInput
   }
 
+  export type AuthOtpListRelationFilter = {
+    every?: AuthOtpWhereInput
+    some?: AuthOtpWhereInput
+    none?: AuthOtpWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -11592,6 +13068,10 @@ export namespace Prisma {
   }
 
   export type RefreshTokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AuthOtpOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11952,6 +13432,91 @@ export namespace Prisma {
     role_id?: SortOrder
   }
 
+  export type EnumOtpTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpType | EnumOtpTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpTypeFilter<$PrismaModel> | $Enums.OtpType
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type AuthOtpCountOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    type?: SortOrder
+    otp_hash?: SortOrder
+    attempts?: SortOrder
+    expires_at?: SortOrder
+    consumed_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type AuthOtpAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type AuthOtpMaxOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    type?: SortOrder
+    otp_hash?: SortOrder
+    attempts?: SortOrder
+    expires_at?: SortOrder
+    consumed_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type AuthOtpMinOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    type?: SortOrder
+    otp_hash?: SortOrder
+    attempts?: SortOrder
+    expires_at?: SortOrder
+    consumed_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type AuthOtpSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EnumOtpTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpType | EnumOtpTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpTypeWithAggregatesFilter<$PrismaModel> | $Enums.OtpType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOtpTypeFilter<$PrismaModel>
+    _max?: NestedEnumOtpTypeFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type UserRoleCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -11966,6 +13531,13 @@ export namespace Prisma {
     connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
   }
 
+  export type AuthOtpCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput> | AuthOtpCreateWithoutUserInput[] | AuthOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuthOtpCreateOrConnectWithoutUserInput | AuthOtpCreateOrConnectWithoutUserInput[]
+    createMany?: AuthOtpCreateManyUserInputEnvelope
+    connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+  }
+
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -11978,6 +13550,13 @@ export namespace Prisma {
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
     createMany?: RefreshTokenCreateManyUserInputEnvelope
     connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+  }
+
+  export type AuthOtpUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput> | AuthOtpCreateWithoutUserInput[] | AuthOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuthOtpCreateOrConnectWithoutUserInput | AuthOtpCreateOrConnectWithoutUserInput[]
+    createMany?: AuthOtpCreateManyUserInputEnvelope
+    connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -12032,6 +13611,20 @@ export namespace Prisma {
     deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
   }
 
+  export type AuthOtpUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput> | AuthOtpCreateWithoutUserInput[] | AuthOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuthOtpCreateOrConnectWithoutUserInput | AuthOtpCreateOrConnectWithoutUserInput[]
+    upsert?: AuthOtpUpsertWithWhereUniqueWithoutUserInput | AuthOtpUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuthOtpCreateManyUserInputEnvelope
+    set?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    disconnect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    delete?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    update?: AuthOtpUpdateWithWhereUniqueWithoutUserInput | AuthOtpUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuthOtpUpdateManyWithWhereWithoutUserInput | AuthOtpUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
+  }
+
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -12058,6 +13651,20 @@ export namespace Prisma {
     update?: RefreshTokenUpdateWithWhereUniqueWithoutUserInput | RefreshTokenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: RefreshTokenUpdateManyWithWhereWithoutUserInput | RefreshTokenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+  }
+
+  export type AuthOtpUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput> | AuthOtpCreateWithoutUserInput[] | AuthOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuthOtpCreateOrConnectWithoutUserInput | AuthOtpCreateOrConnectWithoutUserInput[]
+    upsert?: AuthOtpUpsertWithWhereUniqueWithoutUserInput | AuthOtpUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuthOtpCreateManyUserInputEnvelope
+    set?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    disconnect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    delete?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
+    update?: AuthOtpUpdateWithWhereUniqueWithoutUserInput | AuthOtpUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuthOtpUpdateManyWithWhereWithoutUserInput | AuthOtpUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
   }
 
   export type RolePermissionCreateNestedManyWithoutRoleInput = {
@@ -12372,6 +13979,32 @@ export namespace Prisma {
     update?: XOR<XOR<RoleUpdateToOneWithWhereWithoutService_rolesInput, RoleUpdateWithoutService_rolesInput>, RoleUncheckedUpdateWithoutService_rolesInput>
   }
 
+  export type UserCreateNestedOneWithoutAuthOtpsInput = {
+    create?: XOR<UserCreateWithoutAuthOtpsInput, UserUncheckedCreateWithoutAuthOtpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthOtpsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumOtpTypeFieldUpdateOperationsInput = {
+    set?: $Enums.OtpType
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutAuthOtpsNestedInput = {
+    create?: XOR<UserCreateWithoutAuthOtpsInput, UserUncheckedCreateWithoutAuthOtpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthOtpsInput
+    upsert?: UserUpsertWithoutAuthOtpsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthOtpsInput, UserUpdateWithoutAuthOtpsInput>, UserUncheckedUpdateWithoutAuthOtpsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12553,6 +14186,50 @@ export namespace Prisma {
     _max?: NestedEnumPermissionActionFilter<$PrismaModel>
   }
 
+  export type NestedEnumOtpTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpType | EnumOtpTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpTypeFilter<$PrismaModel> | $Enums.OtpType
+  }
+
+  export type NestedEnumOtpTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpType | EnumOtpTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpType[] | ListEnumOtpTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpTypeWithAggregatesFilter<$PrismaModel> | $Enums.OtpType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOtpTypeFilter<$PrismaModel>
+    _max?: NestedEnumOtpTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type UserRoleCreateWithoutUserInput = {
     role: RoleCreateNestedOneWithoutUsersInput
   }
@@ -12600,6 +14277,36 @@ export namespace Prisma {
 
   export type RefreshTokenCreateManyUserInputEnvelope = {
     data: RefreshTokenCreateManyUserInput | RefreshTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AuthOtpCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type AuthOtpUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type AuthOtpCreateOrConnectWithoutUserInput = {
+    where: AuthOtpWhereUniqueInput
+    create: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuthOtpCreateManyUserInputEnvelope = {
+    data: AuthOtpCreateManyUserInput | AuthOtpCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -12656,6 +14363,36 @@ export namespace Prisma {
     device_name?: StringNullableFilter<"RefreshToken"> | string | null
     replaced_by_id?: StringNullableFilter<"RefreshToken"> | string | null
     expires_at?: DateTimeFilter<"RefreshToken"> | Date | string
+  }
+
+  export type AuthOtpUpsertWithWhereUniqueWithoutUserInput = {
+    where: AuthOtpWhereUniqueInput
+    update: XOR<AuthOtpUpdateWithoutUserInput, AuthOtpUncheckedUpdateWithoutUserInput>
+    create: XOR<AuthOtpCreateWithoutUserInput, AuthOtpUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuthOtpUpdateWithWhereUniqueWithoutUserInput = {
+    where: AuthOtpWhereUniqueInput
+    data: XOR<AuthOtpUpdateWithoutUserInput, AuthOtpUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AuthOtpUpdateManyWithWhereWithoutUserInput = {
+    where: AuthOtpScalarWhereInput
+    data: XOR<AuthOtpUpdateManyMutationInput, AuthOtpUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AuthOtpScalarWhereInput = {
+    AND?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
+    OR?: AuthOtpScalarWhereInput[]
+    NOT?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
+    id?: StringFilter<"AuthOtp"> | string
+    user_id?: StringFilter<"AuthOtp"> | string
+    type?: EnumOtpTypeFilter<"AuthOtp"> | $Enums.OtpType
+    otp_hash?: StringFilter<"AuthOtp"> | string
+    attempts?: IntFilter<"AuthOtp"> | number
+    expires_at?: DateTimeFilter<"AuthOtp"> | Date | string
+    consumed_at?: DateTimeNullableFilter<"AuthOtp"> | Date | string | null
+    created_at?: DateTimeFilter<"AuthOtp"> | Date | string
   }
 
   export type RolePermissionCreateWithoutRoleInput = {
@@ -12827,6 +14564,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolesInput = {
@@ -12843,6 +14581,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolesInput = {
@@ -12896,6 +14635,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolesInput = {
@@ -12912,6 +14652,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -13043,6 +14784,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRefresh_tokensInput = {
@@ -13059,6 +14801,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRefresh_tokensInput = {
@@ -13091,6 +14834,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefresh_tokensInput = {
@@ -13107,6 +14851,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ServiceRoleCreateWithoutService_clientInput = {
@@ -13253,6 +14998,90 @@ export namespace Prisma {
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   }
 
+  export type UserCreateWithoutAuthOtpsInput = {
+    id?: string
+    name?: string | null
+    mobile?: string | null
+    email: string
+    username: string
+    password_hash: string
+    verification_token?: string | null
+    verification_expires?: Date | string | null
+    two_fa_enabled?: boolean
+    status?: $Enums.UserStatus
+    created_at?: Date | string
+    updated_at?: Date | string
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthOtpsInput = {
+    id?: string
+    name?: string | null
+    mobile?: string | null
+    email: string
+    username: string
+    password_hash: string
+    verification_token?: string | null
+    verification_expires?: Date | string | null
+    two_fa_enabled?: boolean
+    status?: $Enums.UserStatus
+    created_at?: Date | string
+    updated_at?: Date | string
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuthOtpsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthOtpsInput, UserUncheckedCreateWithoutAuthOtpsInput>
+  }
+
+  export type UserUpsertWithoutAuthOtpsInput = {
+    update: XOR<UserUpdateWithoutAuthOtpsInput, UserUncheckedUpdateWithoutAuthOtpsInput>
+    create: XOR<UserCreateWithoutAuthOtpsInput, UserUncheckedCreateWithoutAuthOtpsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuthOtpsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuthOtpsInput, UserUncheckedUpdateWithoutAuthOtpsInput>
+  }
+
+  export type UserUpdateWithoutAuthOtpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    mobile?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    verification_token?: NullableStringFieldUpdateOperationsInput | string | null
+    verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuthOtpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    mobile?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    verification_token?: NullableStringFieldUpdateOperationsInput | string | null
+    verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserRoleCreateManyUserInput = {
     role_id: string
   }
@@ -13266,6 +15095,16 @@ export namespace Prisma {
     device_name?: string | null
     replaced_by_id?: string | null
     expires_at: Date | string
+  }
+
+  export type AuthOtpCreateManyUserInput = {
+    id?: string
+    type: $Enums.OtpType
+    otp_hash: string
+    attempts?: number
+    expires_at: Date | string
+    consumed_at?: Date | string | null
+    created_at?: Date | string
   }
 
   export type UserRoleUpdateWithoutUserInput = {
@@ -13311,6 +15150,36 @@ export namespace Prisma {
     device_name?: NullableStringFieldUpdateOperationsInput | string | null
     replaced_by_id?: NullableStringFieldUpdateOperationsInput | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuthOtpUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuthOtpUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuthOtpUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumOtpTypeFieldUpdateOperationsInput | $Enums.OtpType
+    otp_hash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RolePermissionCreateManyRoleInput = {

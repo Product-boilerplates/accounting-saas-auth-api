@@ -3,6 +3,10 @@ import { authValidator } from "./auth.validator";
 
 export type SignupDto = z.infer<typeof authValidator.signup>["body"];
 export type SigninDto = z.infer<typeof authValidator.signin>["body"];
+export type RefreshTokenDto = z.infer<
+  typeof authValidator.refreshToken
+>["body"];
+
 export type ResendVerificationDto = z.infer<
   typeof authValidator.resendVerification
 >["body"];
@@ -19,4 +23,9 @@ export interface GetServiceTokenPayload {
 export interface RegisterServicePayload {
   name: string;
   description?: string;
+}
+
+export interface VerifyOtpDto {
+  tempToken: string;
+  otp: string;
 }

@@ -1,5 +1,5 @@
 import { BaseRoute } from "../../core/base";
-import { authenticate } from "../../core/middlewares";
+import { authenticate, authorize } from "../../core/middlewares";
 import { UserController } from "./user.controller";
 
 export class UserRoutes extends BaseRoute<UserController> {
@@ -23,5 +23,12 @@ export class UserRoutes extends BaseRoute<UserController> {
      *         description: Unauthorized
      */
     this.router.get("/me", authenticate, this.controller.me);
+
+    this.router.get(
+      "/all",
+      authenticate,
+      authorize("user", "READ"),
+      this.controller.getAllUsers,
+    );
   }
 }

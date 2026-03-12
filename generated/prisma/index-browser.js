@@ -186,6 +186,17 @@ exports.Prisma.ServiceRoleScalarFieldEnum = {
   role_id: 'role_id'
 };
 
+exports.Prisma.AuthOtpScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  type: 'type',
+  otp_hash: 'otp_hash',
+  attempts: 'attempts',
+  expires_at: 'expires_at',
+  consumed_at: 'consumed_at',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -222,6 +233,12 @@ exports.PermissionAction = exports.$Enums.PermissionAction = {
   DELETE: 'DELETE'
 };
 
+exports.OtpType = exports.$Enums.OtpType = {
+  LOGIN_2FA: 'LOGIN_2FA',
+  EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Role: 'Role',
@@ -230,7 +247,8 @@ exports.Prisma.ModelName = {
   RolePermission: 'RolePermission',
   RefreshToken: 'RefreshToken',
   ServiceClient: 'ServiceClient',
-  ServiceRole: 'ServiceRole'
+  ServiceRole: 'ServiceRole',
+  AuthOtp: 'AuthOtp'
 };
 
 /**

@@ -30,6 +30,7 @@ model User {
   updated_at           DateTime       @updatedAt
   roles                UserRole[]
   refresh_tokens       RefreshToken[]
+  authOtps             AuthOtp[]
 }
 
 enum UserStatus {
@@ -128,6 +129,30 @@ model ServiceRole {
   role_id           String
 
   @@unique([service_client_id, role_id])
+}
+
+/**
+ * Auth Otp
+ */
+model AuthOtp {
+  id          String    @id @default(cuid())
+  user_id     String
+  type        OtpType
+  otp_hash    String
+  attempts    Int       @default(0)
+  expires_at  DateTime
+  consumed_at DateTime?
+  created_at  DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+enum OtpType {
+  LOGIN_2FA
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
 }
 
 /**

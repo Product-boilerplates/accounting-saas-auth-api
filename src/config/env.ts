@@ -12,6 +12,8 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(10),
   JWT_EXPIRES_IN: z.string(),
 
+  SERVICE_SECRET: z.string().min(10),
+
   REFRESH_SECRET: z.string().min(10),
   REFRESH_EXPIRES_IN: z.string(),
 

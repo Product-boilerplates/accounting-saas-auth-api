@@ -41,6 +41,15 @@ export class AuthRoutes extends BaseRoute<AuthController> {
     );
 
     /**
+     * POST /auth/verify-2fa
+     */
+    this.router.post(
+      "/verify-2fa",
+      validateRequest(authValidator.verify2fa),
+      this.controller.verify2fa,
+    );
+
+    /**
      * POST /auth/verify-email
      */
     this.router.post(
@@ -70,16 +79,12 @@ export class AuthRoutes extends BaseRoute<AuthController> {
     this.router.post("/signout", authenticate, this.controller.signout);
 
     /**
-     * GET /auth/me
-     */
-    this.router.get("/me", authenticate, this.controller.me);
-
-    /**
      * GET /auth/refresh-token
      */
-    this.router.get(
+    this.router.post(
       "/refresh-token",
-      authenticate,
+      validateRequest(authValidator.refreshToken),
+      // authenticate,
       this.controller.refreshToken,
     );
   }

@@ -1,23 +1,37 @@
 import crypto from "crypto";
 import { authService } from ".";
-import { throwValidation } from "../../../core/errors/errors";
+import { OtpType } from "../../../../generated/prisma";
+import { BaseService } from "../../../core/base";
+import {
+  throwUnauthorized,
+  throwValidation,
+} from "../../../core/errors/errors";
 import { eventBus } from "../../../core/events/event-bul.service";
-import { BcryptUtil } from "../../../core/utils/bcrypt.utils";
-import jwtUtils from "../../../core/utils/jwt.utils";
+import { OtpUtils, PasswordUtil } from "../../../core/utils";
 import { ServiceReturnDto } from "../../../core/utils/responseHandler";
+import tempTokenUtils from "../../../core/utils/temp-token.utils";
 import { authConfig } from "../auth.config";
 import { authConstants } from "../auth.constants";
-import { AuthUtils } from "../utils/auth.utils";
-import { randomToken } from "../utils/hash.util";
-import { generateAccessToken } from "../utils/token.util";
 import {
   GetServiceTokenPayload,
+  RefreshTokenDto,
   RegisterServicePayload,
   SERVICE_GRANT_TYPE,
+  VerifyOtpDto,
 } from "../auth.types";
-import { BaseService } from "../../../core/base";
+import { AuthUtils } from "../utils";
+import { randomToken } from "../utils/hash.util";
+import {
+  generateAccessToken,
+  generateServiceToken,
+  verifyAccessToken,
+} from "../utils/token.util";
+import { cacheService } from "../../../core/cache";
 
 export class AuthService extends BaseService {
+  /**
+   * Signup
+   */
   async signup(payload: any) {
     const { name, email, password, username } = payload;
 
@@ -29,7 +43,7 @@ export class AuthService extends BaseService {
       throwValidation("User already exists");
     }
 
-    const passwordHash = await BcryptUtil.hash(password);
+    const passwordHash = await PasswordUtil.hash(password);
 
     const verifyToken = randomToken(32);
     const verifyExpires = new Date(
@@ -58,39 +72,138 @@ export class AuthService extends BaseService {
     return { message: "Registration successful. Check email." };
   }
 
-  async signin(payload: any) {
+  /**
+   * Signin
+   */
+  async signin(payload: any): Promise<any> {
     const { identifier, password, trustDevice } = payload;
 
     const user = await this.db.user.findFirst({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
+      where: {
+        OR: [{ email: identifier }, { username: identifier }],
+      },
     });
 
-    if (!user) return this.throwUnauthorized("Invalid credentials");
-    if (user?.status !== "ACTIVE") this.throwUnauthorized("Email not verified");
+    // Prevent user enumeration
+    if (!user) {
+      return this.throwUnauthorized("Invalid credentials");
+    }
 
-    const match = await BcryptUtil.compare(password, user.password_hash);
-    if (!match) this.throwUnauthorized("Invalid credentials");
+    if (user.status !== "ACTIVE") {
+      this.throwUnauthorized("Account is not active");
+    }
 
+    const isPasswordValid = await PasswordUtil.compare(
+      password,
+      user.password_hash,
+    );
+
+    if (!isPasswordValid) {
+      return this.throwUnauthorized("Invalid credentials");
+    }
+
+    /**
+     * Handle 2FA flow
+     */
+    if (user.two_fa_enabled) {
+      const otp = OtpUtils.generateOtp();
+
+      await this.optStore(user.id, otp);
+
+      eventBus.publish("auth:2fa_login_otp", {
+        email: user.email,
+        name: user.name,
+        otp,
+      });
+
+      const tempToken = tempTokenUtils.generateTempToken({
+        id: user.id,
+      });
+
+      return {
+        message: "Two-factor authentication required",
+        data: {
+          twoFactorRequired: true,
+          tempToken,
+        },
+      };
+    }
+
+    /**
+     * Generate tokens
+     */
     const accessToken = generateAccessToken({
-      id: user?.id,
-      email: user?.email,
-      username: user?.username,
+      id: user.id,
+      email: user.email,
+      username: user.username,
     });
 
-    const refreshToken = await authService.refreshToken.createToken(user?.id);
+    const refreshToken = await authService.refreshToken.createToken(user.id);
 
-    let trustedDeviceToken = null;
+    /**
+     * Trusted device
+     */
+    let trustedDeviceToken: string | null = null;
+
     if (trustDevice) {
       trustedDeviceToken = await authService.trustedDevice.markTrusted(user.id);
     }
 
+    /**
+     * Final response
+     */
+
     return {
       message: "Signin successful",
-      data: { accessToken, refreshToken, trustedDeviceToken },
+      data: {
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+        device: {
+          trustedDeviceToken,
+        },
+      },
     };
   }
 
-  async refresh(payload: any) {
+  async verify2fa(payload: VerifyOtpDto) {
+    const { tempToken, otp } = payload;
+
+    const decoded = tempTokenUtils.verifyTempToken<{ id: string }>(tempToken);
+
+    const valid = await this.otpVerify(decoded.id, otp);
+
+    if (!valid) {
+      return throwUnauthorized("Invalid OTP");
+    }
+
+    /**
+     * Generate tokens
+     */
+    const accessToken = generateAccessToken({
+      id: decoded.id,
+      // email: decoded.email,
+      // username: decoded.username,
+    });
+
+    const refreshToken = await authService.refreshToken.createToken(decoded.id);
+
+    return {
+      message: "Signin successful",
+      data: {
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+      },
+    };
+  }
+
+  /**
+   * Refresh token
+   */
+  async refresh(payload: RefreshTokenDto) {
     const { refreshToken } = payload;
 
     const result = await authService.refreshToken.rotate(refreshToken);
@@ -98,124 +211,49 @@ export class AuthService extends BaseService {
     const accessToken = generateAccessToken({ id: result.userId });
 
     return {
-      message: "Token refreshed",
-      data: { accessToken, refreshToken: result.refreshToken },
+      message: "Token refreshed successfully",
+      data: {
+        tokens: {
+          accessToken,
+          refreshToken: result.refreshToken,
+          type: "Bearer",
+          expiresIn: 900,
+        },
+      },
     };
   }
 
-  async signout(payload: any) {
+  async signout(userId: string, payload: any) {
     if (payload.refreshToken)
       await authService.refreshToken.revoke(payload.refreshToken);
 
     if (payload.trustedDeviceToken)
       await authService.trustedDevice.revoke(payload.trustedDeviceToken);
 
-    return { message: "Signout successful" };
-  }
+    // Revoke access token in Redis (key: "revoked:<token>", value: "1")
+    if (payload?.accessToken) {
+      const decoded: any = verifyAccessToken(payload?.accessToken);
+      const ttl = decoded.exp * 1000 - Date.now();
 
-  async me(userId: string) {
-    const user = await this.db.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        username: true,
-        status: true,
-        created_at: true,
-        two_fa_enabled: true,
-      },
-    });
-
-    if (!user) this.throwError("User not found");
-
-    return {
-      message: "User profile",
-      data: user,
-    };
-  }
-
-  refreshToken = async (payload: any) => {
-    const { refreshToken } = payload;
-
-    if (!refreshToken) return this.throwUnauthorized("Refresh token missing.");
-
-    let decoded;
-    try {
-      decoded = jwtUtils.verifyRefreshToken(refreshToken);
-    } catch {
-      return this.throwUnauthorized("Invalid refresh token.");
+      if (ttl > 0) {
+        await cacheService.set(`revoked:${payload?.accessToken}`, { PX: ttl });
+      }
     }
 
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(refreshToken)
-      .digest("hex");
+    // 3️⃣ Optional: publish logout event (for logging, analytics, or audit)
+    eventBus.publish("auth:user_logout", { userId });
 
-    const storedToken = await this.db.refreshToken.findUnique({
-      where: { token_hash: hashedToken },
-    });
-
-    // If token does not exist or is revoked -> Force login
-    if (!storedToken || storedToken.revoked)
-      return this.throwUnauthorized("Session expired. Please login again.");
-
-    // Expired token -> Force login
-    if (storedToken.expires_at < new Date())
-      return this.throwUnauthorized(
-        "Refresh token expired. Please login again.",
-      );
-
-    // ✅ Token is valid → Rotate it (Revoke old one & create new one)
-    await this.db.refreshToken.update({
-      where: { token_hash: hashedToken },
-      data: { revoked: true },
-    });
-
-    // Fetch user
-    const user = await this.db.user.findUnique({
-      where: { id: decoded.id },
-      select: { id: true, email: true, username: true, name: true },
-    });
-
-    if (!user) return this.throwUnauthorized("User no longer exists.");
-
-    // Create new tokens
-    const newAccessToken = jwtUtils.generateToken({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-    });
-
-    const newRefreshToken = jwtUtils.generateRefreshToken({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-    });
-
-    // Store hashed new refresh token
-    const newHashedToken = crypto
-      .createHash("sha256")
-      .update(newRefreshToken)
-      .digest("hex");
-
-    await this.db.refreshToken.create({
-      data: {
-        user_id: user.id,
-        token_hash: newHashedToken,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
-
+    // 4️⃣ Response
     return {
-      message: "Token refreshed successfully.",
-      data: {
-        token: newAccessToken,
-        refreshToken: newRefreshToken,
-        user,
+      success: true,
+      statusCode: 200,
+      message: "Logout successful",
+      data: {},
+      meta: {
+        timestamp: new Date().toISOString(),
       },
     };
-  };
+  }
 
   // ---------------------------
   // ✉️ Verify Email
@@ -282,7 +320,7 @@ export class AuthService extends BaseService {
       return this.throwUnauthorized("Invalid client credentials.");
     }
 
-    const accessToken = jwtUtils.generateServiceToken({
+    const accessToken = generateServiceToken({
       serviceId: serviceClient.id,
       clientId: serviceClient.client_id,
       name: serviceClient.name,
@@ -345,4 +383,61 @@ export class AuthService extends BaseService {
   // * Forgot password
   // * Change password
   // * Profile update
+
+  /*-------------------*/
+  /*-----Private--------*/
+  /*-------------------*/
+  private async optStore(
+    userId: string,
+    otp: string,
+    type: OtpType = "LOGIN_2FA",
+  ) {
+    const otpHash = await PasswordUtil.hash(otp);
+
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+    await this.db.authOtp.create({
+      data: {
+        user_id: userId,
+        type,
+        otp_hash: otpHash,
+        expires_at: expiresAt,
+      },
+    });
+  }
+
+  private async otpVerify(
+    userId: string,
+    otp: string,
+    type: OtpType = "LOGIN_2FA",
+  ) {
+    const record = await this.db.authOtp.findFirst({
+      where: {
+        user_id: userId,
+        type,
+        consumed_at: null,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    if (!record) return false;
+
+    if (record.expires_at < new Date()) return false;
+
+    if (record.attempts >= 5) return false;
+
+    const valid = await PasswordUtil.compare(otp, record.otp_hash);
+
+    await this.db.authOtp.update({
+      where: { id: record.id },
+      data: {
+        attempts: { increment: 1 },
+        consumed_at: valid ? new Date() : null,
+      },
+    });
+
+    return valid;
+  }
 }

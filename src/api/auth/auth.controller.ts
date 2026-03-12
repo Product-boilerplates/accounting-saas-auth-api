@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { authService } from "./services";
 import { BaseController } from "../../core/base";
+import { cacheService } from "../../core/cache";
+import { authService } from "./services";
 
 export class AuthController extends BaseController {
   constructor() {
@@ -23,6 +24,14 @@ export class AuthController extends BaseController {
     this.sendResponse(res, data);
   });
 
+  verify2fa = this.asyncHandler(async (req: Request, res: Response) => {
+    const { body } = req.validatedData;
+
+    const data = await authService.auth.verify2fa(body);
+
+    this.sendResponse(res, data);
+  });
+
   resendVerification = this.asyncHandler(
     async (req: Request, res: Response) => {
       const data = await authService.auth.refresh(req.body);
@@ -32,35 +41,29 @@ export class AuthController extends BaseController {
   );
 
   signout = this.asyncHandler(async (req: Request, res: Response) => {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer "))
-      res.status(401).json({ message: "Unauthorized" });
-
-    const refreshToken = authHeader?.split(" ")[1];
+    const accessToken = req.headers.authorization?.split(" ")[1];
     const trustedDeviceToken = req.headers?.trusteddevicetoken;
+    const refreshToken = req.headers?.refreshtoken;
 
     const payload = {
+      accessToken,
       refreshToken,
       trustedDeviceToken: trustedDeviceToken || "",
     };
 
-    const data = await authService.auth.signout(payload);
+    const data = await authService.auth.signout(
+      req.user?.id as string,
+      payload,
+    );
 
-    this.sendResponse(res, data);
-  });
-
-  me = this.asyncHandler(async (req: Request, res: Response) => {
-    const userId = req?.user?.id as string;
-    const data = await authService.auth.me(userId);
+    const cacheKey = `user-permissions:${req.user?.id}`;
+    await cacheService.del(cacheKey);
 
     this.sendResponse(res, data);
   });
 
   refreshToken = this.asyncHandler(async (req: Request, res: Response) => {
-    const refreshToken = req.headers.authorization?.split(" ")[1] || "";
-
-    const data = await authService.auth.refreshToken({ refreshToken });
+    const data = await authService.auth.refresh(req.body);
 
     this.sendResponse(res, data);
   });

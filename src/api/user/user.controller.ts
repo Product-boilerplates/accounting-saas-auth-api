@@ -15,4 +15,10 @@ export class UserController extends BaseController {
 
     this.sendResponse(res, data);
   });
+
+  getAllUsers = this.asyncHandler(async (req: Request, res: Response) => {
+    const data = await this.service.getAllUsers(req.query);
+
+    this.sendResponse(res, data);
+  });
 }

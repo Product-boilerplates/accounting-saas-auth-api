@@ -39,6 +39,13 @@ export const authValidator = {
     body: signinBodySchema,
   }),
 
+  verify2fa: z.object({
+    body: z.object({
+      tempToken: z.string(),
+      otp: z.string(),
+    }),
+  }),
+
   resendVerification: z.object({
     body: z.object({
       email: baseValidator.email,
@@ -51,6 +58,12 @@ export const authValidator = {
         .string()
         .trim()
         .length(64, "Invalid or expired verification token"),
+    }),
+  }),
+
+  refreshToken: z.object({
+    body: z.object({
+      refreshToken: z.string().trim(),
     }),
   }),
 };

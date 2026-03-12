@@ -4,8 +4,11 @@
 // biome-ignore-all lint: generated file
 // @ts-nocheck 
 /*
- * This file should be your main import to use Prisma. Through it you get access to all the models, enums, and input types.
- * If you're looking for something you can import in the client-side of your application, please refer to the `browser.ts` file instead.
+ * This file should be your main import to use Prisma-related types and utilities in a browser.
+ * Use it to get access to models, enums, and input types.
+ *
+ * This file does not contain a `PrismaClient` class, nor several other helpers that are intended as server-side only.
+ * See `client.ts` for the standard, server-side entry point.
  *
  * 🟢 You can import this file directly.
  */
@@ -46,23 +49,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Prisma = exports.PrismaClient = exports.$Enums = void 0;
-var $Class = __importStar(require("./internal/class"));
-var Prisma = __importStar(require("./internal/prismaNamespace"));
+exports.$Enums = exports.Prisma = void 0;
+var Prisma = __importStar(require("./internal/prismaNamespaceBrowser"));
 exports.Prisma = Prisma;
 exports.$Enums = __importStar(require("./enums"));
 __exportStar(require("./enums"), exports);
-/**
- * ## Prisma Client
- *
- * Type-safe database client for TypeScript
- * @example
- * ```
- * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
- * ```
- *
- * Read more in our [docs](https://pris.ly/d/client).
- */
-exports.PrismaClient = $Class.getPrismaClientClass();
