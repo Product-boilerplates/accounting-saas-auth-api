@@ -37,6 +37,7 @@ async function userSeed() {
       name: "System Super Admin",
       password_hash: superAdminPassword,
       status: "ACTIVE" as const,
+      user_type: "PLATFORM_ADMIN",
     },
   });
 
@@ -66,6 +67,7 @@ async function userSeed() {
       name: "Admin User",
       password_hash: adminPassword,
       status: "ACTIVE" as const,
+      user_type: "PLATFORM_ADMIN",
     },
   });
 
@@ -95,6 +97,7 @@ async function userSeed() {
       name: "Normal User",
       password_hash: userPassword,
       status: "ACTIVE" as const,
+      user_type: "TENANT_USER",
     },
   });
 
