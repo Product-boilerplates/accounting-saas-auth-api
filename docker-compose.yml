@@ -2,35 +2,58 @@ version: "3.8"
 
 services:
   postgres:
-    image: postgres:17
+    image: postgres:17-alpine
     container_name: auth_postgres
     environment:
-      POSTGRES_USER: auth_user
-      POSTGRES_PASSWORD: auth_user_pass
+      POSTGRES_USER: auth_admin
+      POSTGRES_PASSWORD: db_admin_pass
       POSTGRES_DB: auth_db
     ports:
-      - "5433:5432" # 🔥 Changed here
+      - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_admin -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth_network
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     container_name: auth_redis
+    restart: unless-stopped
     ports:
-      - "6380:6379" # Optional: avoid local redis conflict
+      - "6380:6379"
+    networks:
+      - auth_network
 
   app:
     build: .
     container_name: auth_app
     ports:
-      - "4001:4001"
+      - "4040:4040"
+    environment:
+      - DATABASE_URL
+      - REDIS_URL
+      - NODE_ENV
+      - PORT
     env_file:
       - .env.production
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     restart: unless-stopped
-    command: sh -c "npx prisma migrate deploy && npm run start"
+    networks:
+      - auth_network
 
 volumes:
-  pgdata:
+  postgres_data:
+
+networks:
+  auth_network:
+    driver: bridge

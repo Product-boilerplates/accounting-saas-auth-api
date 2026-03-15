@@ -130,9 +130,16 @@ exports.Prisma.UserScalarFieldEnum = {
   verification_token: 'verification_token',
   verification_expires: 'verification_expires',
   two_fa_enabled: 'two_fa_enabled',
+  user_type: 'user_type',
   status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at'
+};
+
+exports.Prisma.TenantUserScalarFieldEnum = {
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  role_id: 'role_id'
 };
 
 exports.Prisma.RoleScalarFieldEnum = {
@@ -211,6 +218,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.UserType = exports.$Enums.UserType = {
+  PLATFORM_ADMIN: 'PLATFORM_ADMIN',
+  TENANT_USER: 'TENANT_USER'
+};
+
 exports.UserStatus = exports.$Enums.UserStatus = {
   UNVERIFIED: 'UNVERIFIED',
   PENDING_VERIFICATION: 'PENDING_VERIFICATION',
@@ -241,6 +253,7 @@ exports.OtpType = exports.$Enums.OtpType = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  TenantUser: 'TenantUser',
   Role: 'Role',
   Permission: 'Permission',
   UserRole: 'UserRole',

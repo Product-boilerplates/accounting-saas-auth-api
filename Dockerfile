@@ -1,27 +1,48 @@
 # ---------- Builder ----------
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+RUN apk add --no-cache openssl
 
-COPY tsconfig*.json ./
-COPY src ./src
+COPY package.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
 COPY prisma ./prisma
-
 RUN npx prisma generate
-RUN npm run build
+
+COPY . .
+
+RUN pnpm build
 
 
 # ---------- Runtime ----------
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
+ENV NODE_ENV=production
+
+COPY package.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm prisma
+RUN pnpm install --prod --frozen-lockfile
+
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
+COPY .env.production .env.production
 
-EXPOSE 4001
+RUN addgroup -S nodejs -g 1001
+RUN adduser -S nodejs -u 1001
+RUN chown -R nodejs:nodejs /app
+RUN chmod +x ./entrypoint.sh
 
-CMD sh -c "npx prisma migrate deploy && node dist/main.js"
+USER nodejs
+
+EXPOSE 4040
+
+ENTRYPOINT ["./entrypoint.sh"]

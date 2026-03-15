@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model TenantUser
+ * 
+ */
+export type TenantUser = $Result.DefaultSelection<Prisma.$TenantUserPayload>
+/**
  * Model Role
  * 
  */
@@ -64,7 +69,15 @@ export type AuthOtp = $Result.DefaultSelection<Prisma.$AuthOtpPayload>
  * Enums
  */
 export namespace $Enums {
-  export const UserStatus: {
+  export const UserType: {
+  PLATFORM_ADMIN: 'PLATFORM_ADMIN',
+  TENANT_USER: 'TENANT_USER'
+};
+
+export type UserType = (typeof UserType)[keyof typeof UserType]
+
+
+export const UserStatus: {
   UNVERIFIED: 'UNVERIFIED',
   PENDING_VERIFICATION: 'PENDING_VERIFICATION',
   ACTIVE: 'ACTIVE',
@@ -101,6 +114,10 @@ export const OtpType: {
 export type OtpType = (typeof OtpType)[keyof typeof OtpType]
 
 }
+
+export type UserType = $Enums.UserType
+
+export const UserType: typeof $Enums.UserType
 
 export type UserStatus = $Enums.UserStatus
 
@@ -240,6 +257,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tenantUser`: Exposes CRUD operations for the **TenantUser** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TenantUsers
+    * const tenantUsers = await prisma.tenantUser.findMany()
+    * ```
+    */
+  get tenantUser(): Prisma.TenantUserDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.role`: Exposes CRUD operations for the **Role** model.
@@ -755,6 +782,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    TenantUser: 'TenantUser',
     Role: 'Role',
     Permission: 'Permission',
     UserRole: 'UserRole',
@@ -778,7 +806,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken" | "serviceClient" | "serviceRole" | "authOtp"
+      modelProps: "user" | "tenantUser" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken" | "serviceClient" | "serviceRole" | "authOtp"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -853,6 +881,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      TenantUser: {
+        payload: Prisma.$TenantUserPayload<ExtArgs>
+        fields: Prisma.TenantUserFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TenantUserFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TenantUserFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          findFirst: {
+            args: Prisma.TenantUserFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TenantUserFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          findMany: {
+            args: Prisma.TenantUserFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>[]
+          }
+          create: {
+            args: Prisma.TenantUserCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          createMany: {
+            args: Prisma.TenantUserCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TenantUserCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>[]
+          }
+          delete: {
+            args: Prisma.TenantUserDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          update: {
+            args: Prisma.TenantUserUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          deleteMany: {
+            args: Prisma.TenantUserDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TenantUserUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TenantUserUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>[]
+          }
+          upsert: {
+            args: Prisma.TenantUserUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantUserPayload>
+          }
+          aggregate: {
+            args: Prisma.TenantUserAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTenantUser>
+          }
+          groupBy: {
+            args: Prisma.TenantUserGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TenantUserGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TenantUserCountArgs<ExtArgs>
+            result: $Utils.Optional<TenantUserCountAggregateOutputType> | number
           }
         }
       }
@@ -1557,6 +1659,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    tenantUser?: TenantUserOmit
     role?: RoleOmit
     permission?: PermissionOmit
     userRole?: UserRoleOmit
@@ -1648,12 +1751,14 @@ export namespace Prisma {
     roles: number
     refresh_tokens: number
     authOtps: number
+    tenantUsers: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | UserCountOutputTypeCountRolesArgs
     refresh_tokens?: boolean | UserCountOutputTypeCountRefresh_tokensArgs
     authOtps?: boolean | UserCountOutputTypeCountAuthOtpsArgs
+    tenantUsers?: boolean | UserCountOutputTypeCountTenantUsersArgs
   }
 
   // Custom InputTypes
@@ -1688,6 +1793,13 @@ export namespace Prisma {
     where?: AuthOtpWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTenantUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUserWhereInput
+  }
+
 
   /**
    * Count Type RoleCountOutputType
@@ -1697,12 +1809,14 @@ export namespace Prisma {
     permissions: number
     users: number
     service_roles: number
+    tenantUsers: number
   }
 
   export type RoleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     permissions?: boolean | RoleCountOutputTypeCountPermissionsArgs
     users?: boolean | RoleCountOutputTypeCountUsersArgs
     service_roles?: boolean | RoleCountOutputTypeCountService_rolesArgs
+    tenantUsers?: boolean | RoleCountOutputTypeCountTenantUsersArgs
   }
 
   // Custom InputTypes
@@ -1735,6 +1849,13 @@ export namespace Prisma {
    */
   export type RoleCountOutputTypeCountService_rolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceRoleWhereInput
+  }
+
+  /**
+   * RoleCountOutputType without action
+   */
+  export type RoleCountOutputTypeCountTenantUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUserWhereInput
   }
 
 
@@ -1824,6 +1945,7 @@ export namespace Prisma {
     verification_token: string | null
     verification_expires: Date | null
     two_fa_enabled: boolean | null
+    user_type: $Enums.UserType | null
     status: $Enums.UserStatus | null
     created_at: Date | null
     updated_at: Date | null
@@ -1839,6 +1961,7 @@ export namespace Prisma {
     verification_token: string | null
     verification_expires: Date | null
     two_fa_enabled: boolean | null
+    user_type: $Enums.UserType | null
     status: $Enums.UserStatus | null
     created_at: Date | null
     updated_at: Date | null
@@ -1854,6 +1977,7 @@ export namespace Prisma {
     verification_token: number
     verification_expires: number
     two_fa_enabled: number
+    user_type: number
     status: number
     created_at: number
     updated_at: number
@@ -1871,6 +1995,7 @@ export namespace Prisma {
     verification_token?: true
     verification_expires?: true
     two_fa_enabled?: true
+    user_type?: true
     status?: true
     created_at?: true
     updated_at?: true
@@ -1886,6 +2011,7 @@ export namespace Prisma {
     verification_token?: true
     verification_expires?: true
     two_fa_enabled?: true
+    user_type?: true
     status?: true
     created_at?: true
     updated_at?: true
@@ -1901,6 +2027,7 @@ export namespace Prisma {
     verification_token?: true
     verification_expires?: true
     two_fa_enabled?: true
+    user_type?: true
     status?: true
     created_at?: true
     updated_at?: true
@@ -1989,6 +2116,7 @@ export namespace Prisma {
     verification_token: string | null
     verification_expires: Date | null
     two_fa_enabled: boolean
+    user_type: $Enums.UserType
     status: $Enums.UserStatus
     created_at: Date
     updated_at: Date
@@ -2021,12 +2149,14 @@ export namespace Prisma {
     verification_token?: boolean
     verification_expires?: boolean
     two_fa_enabled?: boolean
+    user_type?: boolean
     status?: boolean
     created_at?: boolean
     updated_at?: boolean
     roles?: boolean | User$rolesArgs<ExtArgs>
     refresh_tokens?: boolean | User$refresh_tokensArgs<ExtArgs>
     authOtps?: boolean | User$authOtpsArgs<ExtArgs>
+    tenantUsers?: boolean | User$tenantUsersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2040,6 +2170,7 @@ export namespace Prisma {
     verification_token?: boolean
     verification_expires?: boolean
     two_fa_enabled?: boolean
+    user_type?: boolean
     status?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -2055,6 +2186,7 @@ export namespace Prisma {
     verification_token?: boolean
     verification_expires?: boolean
     two_fa_enabled?: boolean
+    user_type?: boolean
     status?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -2070,16 +2202,18 @@ export namespace Prisma {
     verification_token?: boolean
     verification_expires?: boolean
     two_fa_enabled?: boolean
+    user_type?: boolean
     status?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "mobile" | "email" | "username" | "password_hash" | "verification_token" | "verification_expires" | "two_fa_enabled" | "status" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "mobile" | "email" | "username" | "password_hash" | "verification_token" | "verification_expires" | "two_fa_enabled" | "user_type" | "status" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | User$rolesArgs<ExtArgs>
     refresh_tokens?: boolean | User$refresh_tokensArgs<ExtArgs>
     authOtps?: boolean | User$authOtpsArgs<ExtArgs>
+    tenantUsers?: boolean | User$tenantUsersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2091,6 +2225,7 @@ export namespace Prisma {
       roles: Prisma.$UserRolePayload<ExtArgs>[]
       refresh_tokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       authOtps: Prisma.$AuthOtpPayload<ExtArgs>[]
+      tenantUsers: Prisma.$TenantUserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2102,6 +2237,7 @@ export namespace Prisma {
       verification_token: string | null
       verification_expires: Date | null
       two_fa_enabled: boolean
+      user_type: $Enums.UserType
       status: $Enums.UserStatus
       created_at: Date
       updated_at: Date
@@ -2502,6 +2638,7 @@ export namespace Prisma {
     roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refresh_tokens<T extends User$refresh_tokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refresh_tokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     authOtps<T extends User$authOtpsArgs<ExtArgs> = {}>(args?: Subset<T, User$authOtpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthOtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tenantUsers<T extends User$tenantUsersArgs<ExtArgs> = {}>(args?: Subset<T, User$tenantUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2540,6 +2677,7 @@ export namespace Prisma {
     readonly verification_token: FieldRef<"User", 'String'>
     readonly verification_expires: FieldRef<"User", 'DateTime'>
     readonly two_fa_enabled: FieldRef<"User", 'Boolean'>
+    readonly user_type: FieldRef<"User", 'UserType'>
     readonly status: FieldRef<"User", 'UserStatus'>
     readonly created_at: FieldRef<"User", 'DateTime'>
     readonly updated_at: FieldRef<"User", 'DateTime'>
@@ -3003,6 +3141,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.tenantUsers
+   */
+  export type User$tenantUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    where?: TenantUserWhereInput
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    cursor?: TenantUserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3018,6 +3180,1046 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TenantUser
+   */
+
+  export type AggregateTenantUser = {
+    _count: TenantUserCountAggregateOutputType | null
+    _min: TenantUserMinAggregateOutputType | null
+    _max: TenantUserMaxAggregateOutputType | null
+  }
+
+  export type TenantUserMinAggregateOutputType = {
+    tenant_id: string | null
+    user_id: string | null
+    role_id: string | null
+  }
+
+  export type TenantUserMaxAggregateOutputType = {
+    tenant_id: string | null
+    user_id: string | null
+    role_id: string | null
+  }
+
+  export type TenantUserCountAggregateOutputType = {
+    tenant_id: number
+    user_id: number
+    role_id: number
+    _all: number
+  }
+
+
+  export type TenantUserMinAggregateInputType = {
+    tenant_id?: true
+    user_id?: true
+    role_id?: true
+  }
+
+  export type TenantUserMaxAggregateInputType = {
+    tenant_id?: true
+    user_id?: true
+    role_id?: true
+  }
+
+  export type TenantUserCountAggregateInputType = {
+    tenant_id?: true
+    user_id?: true
+    role_id?: true
+    _all?: true
+  }
+
+  export type TenantUserAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantUser to aggregate.
+     */
+    where?: TenantUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsers to fetch.
+     */
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TenantUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TenantUsers
+    **/
+    _count?: true | TenantUserCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TenantUserMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TenantUserMaxAggregateInputType
+  }
+
+  export type GetTenantUserAggregateType<T extends TenantUserAggregateArgs> = {
+        [P in keyof T & keyof AggregateTenantUser]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTenantUser[P]>
+      : GetScalarType<T[P], AggregateTenantUser[P]>
+  }
+
+
+
+
+  export type TenantUserGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantUserWhereInput
+    orderBy?: TenantUserOrderByWithAggregationInput | TenantUserOrderByWithAggregationInput[]
+    by: TenantUserScalarFieldEnum[] | TenantUserScalarFieldEnum
+    having?: TenantUserScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TenantUserCountAggregateInputType | true
+    _min?: TenantUserMinAggregateInputType
+    _max?: TenantUserMaxAggregateInputType
+  }
+
+  export type TenantUserGroupByOutputType = {
+    tenant_id: string
+    user_id: string
+    role_id: string
+    _count: TenantUserCountAggregateOutputType | null
+    _min: TenantUserMinAggregateOutputType | null
+    _max: TenantUserMaxAggregateOutputType | null
+  }
+
+  type GetTenantUserGroupByPayload<T extends TenantUserGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TenantUserGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TenantUserGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TenantUserGroupByOutputType[P]>
+            : GetScalarType<T[P], TenantUserGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TenantUserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    tenant_id?: boolean
+    user_id?: boolean
+    role_id?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantUser"]>
+
+  export type TenantUserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    tenant_id?: boolean
+    user_id?: boolean
+    role_id?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantUser"]>
+
+  export type TenantUserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    tenant_id?: boolean
+    user_id?: boolean
+    role_id?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantUser"]>
+
+  export type TenantUserSelectScalar = {
+    tenant_id?: boolean
+    user_id?: boolean
+    role_id?: boolean
+  }
+
+  export type TenantUserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"tenant_id" | "user_id" | "role_id", ExtArgs["result"]["tenantUser"]>
+  export type TenantUserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+  export type TenantUserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+  export type TenantUserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    role?: boolean | RoleDefaultArgs<ExtArgs>
+  }
+
+  export type $TenantUserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TenantUser"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      role: Prisma.$RolePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      tenant_id: string
+      user_id: string
+      role_id: string
+    }, ExtArgs["result"]["tenantUser"]>
+    composites: {}
+  }
+
+  type TenantUserGetPayload<S extends boolean | null | undefined | TenantUserDefaultArgs> = $Result.GetResult<Prisma.$TenantUserPayload, S>
+
+  type TenantUserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TenantUserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TenantUserCountAggregateInputType | true
+    }
+
+  export interface TenantUserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TenantUser'], meta: { name: 'TenantUser' } }
+    /**
+     * Find zero or one TenantUser that matches the filter.
+     * @param {TenantUserFindUniqueArgs} args - Arguments to find a TenantUser
+     * @example
+     * // Get one TenantUser
+     * const tenantUser = await prisma.tenantUser.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TenantUserFindUniqueArgs>(args: SelectSubset<T, TenantUserFindUniqueArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TenantUser that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TenantUserFindUniqueOrThrowArgs} args - Arguments to find a TenantUser
+     * @example
+     * // Get one TenantUser
+     * const tenantUser = await prisma.tenantUser.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TenantUserFindUniqueOrThrowArgs>(args: SelectSubset<T, TenantUserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TenantUser that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserFindFirstArgs} args - Arguments to find a TenantUser
+     * @example
+     * // Get one TenantUser
+     * const tenantUser = await prisma.tenantUser.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TenantUserFindFirstArgs>(args?: SelectSubset<T, TenantUserFindFirstArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TenantUser that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserFindFirstOrThrowArgs} args - Arguments to find a TenantUser
+     * @example
+     * // Get one TenantUser
+     * const tenantUser = await prisma.tenantUser.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TenantUserFindFirstOrThrowArgs>(args?: SelectSubset<T, TenantUserFindFirstOrThrowArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TenantUsers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TenantUsers
+     * const tenantUsers = await prisma.tenantUser.findMany()
+     * 
+     * // Get first 10 TenantUsers
+     * const tenantUsers = await prisma.tenantUser.findMany({ take: 10 })
+     * 
+     * // Only select the `tenant_id`
+     * const tenantUserWithTenant_idOnly = await prisma.tenantUser.findMany({ select: { tenant_id: true } })
+     * 
+     */
+    findMany<T extends TenantUserFindManyArgs>(args?: SelectSubset<T, TenantUserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TenantUser.
+     * @param {TenantUserCreateArgs} args - Arguments to create a TenantUser.
+     * @example
+     * // Create one TenantUser
+     * const TenantUser = await prisma.tenantUser.create({
+     *   data: {
+     *     // ... data to create a TenantUser
+     *   }
+     * })
+     * 
+     */
+    create<T extends TenantUserCreateArgs>(args: SelectSubset<T, TenantUserCreateArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TenantUsers.
+     * @param {TenantUserCreateManyArgs} args - Arguments to create many TenantUsers.
+     * @example
+     * // Create many TenantUsers
+     * const tenantUser = await prisma.tenantUser.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TenantUserCreateManyArgs>(args?: SelectSubset<T, TenantUserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TenantUsers and returns the data saved in the database.
+     * @param {TenantUserCreateManyAndReturnArgs} args - Arguments to create many TenantUsers.
+     * @example
+     * // Create many TenantUsers
+     * const tenantUser = await prisma.tenantUser.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TenantUsers and only return the `tenant_id`
+     * const tenantUserWithTenant_idOnly = await prisma.tenantUser.createManyAndReturn({
+     *   select: { tenant_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TenantUserCreateManyAndReturnArgs>(args?: SelectSubset<T, TenantUserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TenantUser.
+     * @param {TenantUserDeleteArgs} args - Arguments to delete one TenantUser.
+     * @example
+     * // Delete one TenantUser
+     * const TenantUser = await prisma.tenantUser.delete({
+     *   where: {
+     *     // ... filter to delete one TenantUser
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TenantUserDeleteArgs>(args: SelectSubset<T, TenantUserDeleteArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TenantUser.
+     * @param {TenantUserUpdateArgs} args - Arguments to update one TenantUser.
+     * @example
+     * // Update one TenantUser
+     * const tenantUser = await prisma.tenantUser.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TenantUserUpdateArgs>(args: SelectSubset<T, TenantUserUpdateArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TenantUsers.
+     * @param {TenantUserDeleteManyArgs} args - Arguments to filter TenantUsers to delete.
+     * @example
+     * // Delete a few TenantUsers
+     * const { count } = await prisma.tenantUser.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TenantUserDeleteManyArgs>(args?: SelectSubset<T, TenantUserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TenantUsers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TenantUsers
+     * const tenantUser = await prisma.tenantUser.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TenantUserUpdateManyArgs>(args: SelectSubset<T, TenantUserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TenantUsers and returns the data updated in the database.
+     * @param {TenantUserUpdateManyAndReturnArgs} args - Arguments to update many TenantUsers.
+     * @example
+     * // Update many TenantUsers
+     * const tenantUser = await prisma.tenantUser.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TenantUsers and only return the `tenant_id`
+     * const tenantUserWithTenant_idOnly = await prisma.tenantUser.updateManyAndReturn({
+     *   select: { tenant_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TenantUserUpdateManyAndReturnArgs>(args: SelectSubset<T, TenantUserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TenantUser.
+     * @param {TenantUserUpsertArgs} args - Arguments to update or create a TenantUser.
+     * @example
+     * // Update or create a TenantUser
+     * const tenantUser = await prisma.tenantUser.upsert({
+     *   create: {
+     *     // ... data to create a TenantUser
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TenantUser we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TenantUserUpsertArgs>(args: SelectSubset<T, TenantUserUpsertArgs<ExtArgs>>): Prisma__TenantUserClient<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TenantUsers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserCountArgs} args - Arguments to filter TenantUsers to count.
+     * @example
+     * // Count the number of TenantUsers
+     * const count = await prisma.tenantUser.count({
+     *   where: {
+     *     // ... the filter for the TenantUsers we want to count
+     *   }
+     * })
+    **/
+    count<T extends TenantUserCountArgs>(
+      args?: Subset<T, TenantUserCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TenantUserCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TenantUser.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TenantUserAggregateArgs>(args: Subset<T, TenantUserAggregateArgs>): Prisma.PrismaPromise<GetTenantUserAggregateType<T>>
+
+    /**
+     * Group by TenantUser.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUserGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TenantUserGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TenantUserGroupByArgs['orderBy'] }
+        : { orderBy?: TenantUserGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TenantUserGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTenantUserGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TenantUser model
+   */
+  readonly fields: TenantUserFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TenantUser.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TenantUserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    role<T extends RoleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RoleDefaultArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TenantUser model
+   */
+  interface TenantUserFieldRefs {
+    readonly tenant_id: FieldRef<"TenantUser", 'String'>
+    readonly user_id: FieldRef<"TenantUser", 'String'>
+    readonly role_id: FieldRef<"TenantUser", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TenantUser findUnique
+   */
+  export type TenantUserFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUser to fetch.
+     */
+    where: TenantUserWhereUniqueInput
+  }
+
+  /**
+   * TenantUser findUniqueOrThrow
+   */
+  export type TenantUserFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUser to fetch.
+     */
+    where: TenantUserWhereUniqueInput
+  }
+
+  /**
+   * TenantUser findFirst
+   */
+  export type TenantUserFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUser to fetch.
+     */
+    where?: TenantUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsers to fetch.
+     */
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantUsers.
+     */
+    cursor?: TenantUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantUsers.
+     */
+    distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUser findFirstOrThrow
+   */
+  export type TenantUserFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUser to fetch.
+     */
+    where?: TenantUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsers to fetch.
+     */
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantUsers.
+     */
+    cursor?: TenantUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantUsers.
+     */
+    distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUser findMany
+   */
+  export type TenantUserFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantUsers to fetch.
+     */
+    where?: TenantUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantUsers to fetch.
+     */
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TenantUsers.
+     */
+    cursor?: TenantUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantUsers.
+     */
+    skip?: number
+    distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
+  }
+
+  /**
+   * TenantUser create
+   */
+  export type TenantUserCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TenantUser.
+     */
+    data: XOR<TenantUserCreateInput, TenantUserUncheckedCreateInput>
+  }
+
+  /**
+   * TenantUser createMany
+   */
+  export type TenantUserCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TenantUsers.
+     */
+    data: TenantUserCreateManyInput | TenantUserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TenantUser createManyAndReturn
+   */
+  export type TenantUserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * The data used to create many TenantUsers.
+     */
+    data: TenantUserCreateManyInput | TenantUserCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TenantUser update
+   */
+  export type TenantUserUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TenantUser.
+     */
+    data: XOR<TenantUserUpdateInput, TenantUserUncheckedUpdateInput>
+    /**
+     * Choose, which TenantUser to update.
+     */
+    where: TenantUserWhereUniqueInput
+  }
+
+  /**
+   * TenantUser updateMany
+   */
+  export type TenantUserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TenantUsers.
+     */
+    data: XOR<TenantUserUpdateManyMutationInput, TenantUserUncheckedUpdateManyInput>
+    /**
+     * Filter which TenantUsers to update
+     */
+    where?: TenantUserWhereInput
+    /**
+     * Limit how many TenantUsers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TenantUser updateManyAndReturn
+   */
+  export type TenantUserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * The data used to update TenantUsers.
+     */
+    data: XOR<TenantUserUpdateManyMutationInput, TenantUserUncheckedUpdateManyInput>
+    /**
+     * Filter which TenantUsers to update
+     */
+    where?: TenantUserWhereInput
+    /**
+     * Limit how many TenantUsers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TenantUser upsert
+   */
+  export type TenantUserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TenantUser to update in case it exists.
+     */
+    where: TenantUserWhereUniqueInput
+    /**
+     * In case the TenantUser found by the `where` argument doesn't exist, create a new TenantUser with this data.
+     */
+    create: XOR<TenantUserCreateInput, TenantUserUncheckedCreateInput>
+    /**
+     * In case the TenantUser was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TenantUserUpdateInput, TenantUserUncheckedUpdateInput>
+  }
+
+  /**
+   * TenantUser delete
+   */
+  export type TenantUserDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    /**
+     * Filter which TenantUser to delete.
+     */
+    where: TenantUserWhereUniqueInput
+  }
+
+  /**
+   * TenantUser deleteMany
+   */
+  export type TenantUserDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantUsers to delete
+     */
+    where?: TenantUserWhereInput
+    /**
+     * Limit how many TenantUsers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TenantUser without action
+   */
+  export type TenantUserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
   }
 
 
@@ -3172,6 +4374,7 @@ export namespace Prisma {
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
     users?: boolean | Role$usersArgs<ExtArgs>
     service_roles?: boolean | Role$service_rolesArgs<ExtArgs>
+    tenantUsers?: boolean | Role$tenantUsersArgs<ExtArgs>
     _count?: boolean | RoleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["role"]>
 
@@ -3198,6 +4401,7 @@ export namespace Prisma {
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
     users?: boolean | Role$usersArgs<ExtArgs>
     service_roles?: boolean | Role$service_rolesArgs<ExtArgs>
+    tenantUsers?: boolean | Role$tenantUsersArgs<ExtArgs>
     _count?: boolean | RoleCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RoleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3209,6 +4413,7 @@ export namespace Prisma {
       permissions: Prisma.$RolePermissionPayload<ExtArgs>[]
       users: Prisma.$UserRolePayload<ExtArgs>[]
       service_roles: Prisma.$ServiceRolePayload<ExtArgs>[]
+      tenantUsers: Prisma.$TenantUserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3611,6 +4816,7 @@ export namespace Prisma {
     permissions<T extends Role$permissionsArgs<ExtArgs> = {}>(args?: Subset<T, Role$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     users<T extends Role$usersArgs<ExtArgs> = {}>(args?: Subset<T, Role$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     service_roles<T extends Role$service_rolesArgs<ExtArgs> = {}>(args?: Subset<T, Role$service_rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tenantUsers<T extends Role$tenantUsersArgs<ExtArgs> = {}>(args?: Subset<T, Role$tenantUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4100,6 +5306,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ServiceRoleScalarFieldEnum | ServiceRoleScalarFieldEnum[]
+  }
+
+  /**
+   * Role.tenantUsers
+   */
+  export type Role$tenantUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantUser
+     */
+    select?: TenantUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantUser
+     */
+    omit?: TenantUserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantUserInclude<ExtArgs> | null
+    where?: TenantUserWhereInput
+    orderBy?: TenantUserOrderByWithRelationInput | TenantUserOrderByWithRelationInput[]
+    cursor?: TenantUserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
   }
 
   /**
@@ -11633,12 +12863,22 @@ export namespace Prisma {
     verification_token: 'verification_token',
     verification_expires: 'verification_expires',
     two_fa_enabled: 'two_fa_enabled',
+    user_type: 'user_type',
     status: 'status',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const TenantUserScalarFieldEnum: {
+    tenant_id: 'tenant_id',
+    user_id: 'user_id',
+    role_id: 'role_id'
+  };
+
+  export type TenantUserScalarFieldEnum = (typeof TenantUserScalarFieldEnum)[keyof typeof TenantUserScalarFieldEnum]
 
 
   export const RoleScalarFieldEnum: {
@@ -11792,6 +13032,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'UserType'
+   */
+  export type EnumUserTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserType'>
+    
+
+
+  /**
+   * Reference to a field of type 'UserType[]'
+   */
+  export type ListEnumUserTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'UserStatus'
    */
   export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus'>
@@ -11877,12 +13131,14 @@ export namespace Prisma {
     verification_token?: StringNullableFilter<"User"> | string | null
     verification_expires?: DateTimeNullableFilter<"User"> | Date | string | null
     two_fa_enabled?: BoolFilter<"User"> | boolean
+    user_type?: EnumUserTypeFilter<"User"> | $Enums.UserType
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     roles?: UserRoleListRelationFilter
     refresh_tokens?: RefreshTokenListRelationFilter
     authOtps?: AuthOtpListRelationFilter
+    tenantUsers?: TenantUserListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11895,12 +13151,14 @@ export namespace Prisma {
     verification_token?: SortOrderInput | SortOrder
     verification_expires?: SortOrderInput | SortOrder
     two_fa_enabled?: SortOrder
+    user_type?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     roles?: UserRoleOrderByRelationAggregateInput
     refresh_tokens?: RefreshTokenOrderByRelationAggregateInput
     authOtps?: AuthOtpOrderByRelationAggregateInput
+    tenantUsers?: TenantUserOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11916,12 +13174,14 @@ export namespace Prisma {
     verification_token?: StringNullableFilter<"User"> | string | null
     verification_expires?: DateTimeNullableFilter<"User"> | Date | string | null
     two_fa_enabled?: BoolFilter<"User"> | boolean
+    user_type?: EnumUserTypeFilter<"User"> | $Enums.UserType
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     roles?: UserRoleListRelationFilter
     refresh_tokens?: RefreshTokenListRelationFilter
     authOtps?: AuthOtpListRelationFilter
+    tenantUsers?: TenantUserListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -11934,6 +13194,7 @@ export namespace Prisma {
     verification_token?: SortOrderInput | SortOrder
     verification_expires?: SortOrderInput | SortOrder
     two_fa_enabled?: SortOrder
+    user_type?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -11955,9 +13216,59 @@ export namespace Prisma {
     verification_token?: StringNullableWithAggregatesFilter<"User"> | string | null
     verification_expires?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     two_fa_enabled?: BoolWithAggregatesFilter<"User"> | boolean
+    user_type?: EnumUserTypeWithAggregatesFilter<"User"> | $Enums.UserType
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type TenantUserWhereInput = {
+    AND?: TenantUserWhereInput | TenantUserWhereInput[]
+    OR?: TenantUserWhereInput[]
+    NOT?: TenantUserWhereInput | TenantUserWhereInput[]
+    tenant_id?: StringFilter<"TenantUser"> | string
+    user_id?: StringFilter<"TenantUser"> | string
+    role_id?: StringFilter<"TenantUser"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
+  }
+
+  export type TenantUserOrderByWithRelationInput = {
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    role_id?: SortOrder
+    user?: UserOrderByWithRelationInput
+    role?: RoleOrderByWithRelationInput
+  }
+
+  export type TenantUserWhereUniqueInput = Prisma.AtLeast<{
+    tenant_id_user_id?: TenantUserTenant_idUser_idCompoundUniqueInput
+    AND?: TenantUserWhereInput | TenantUserWhereInput[]
+    OR?: TenantUserWhereInput[]
+    NOT?: TenantUserWhereInput | TenantUserWhereInput[]
+    tenant_id?: StringFilter<"TenantUser"> | string
+    user_id?: StringFilter<"TenantUser"> | string
+    role_id?: StringFilter<"TenantUser"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
+  }, "tenant_id_user_id">
+
+  export type TenantUserOrderByWithAggregationInput = {
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    role_id?: SortOrder
+    _count?: TenantUserCountOrderByAggregateInput
+    _max?: TenantUserMaxOrderByAggregateInput
+    _min?: TenantUserMinOrderByAggregateInput
+  }
+
+  export type TenantUserScalarWhereWithAggregatesInput = {
+    AND?: TenantUserScalarWhereWithAggregatesInput | TenantUserScalarWhereWithAggregatesInput[]
+    OR?: TenantUserScalarWhereWithAggregatesInput[]
+    NOT?: TenantUserScalarWhereWithAggregatesInput | TenantUserScalarWhereWithAggregatesInput[]
+    tenant_id?: StringWithAggregatesFilter<"TenantUser"> | string
+    user_id?: StringWithAggregatesFilter<"TenantUser"> | string
+    role_id?: StringWithAggregatesFilter<"TenantUser"> | string
   }
 
   export type RoleWhereInput = {
@@ -11970,6 +13281,7 @@ export namespace Prisma {
     permissions?: RolePermissionListRelationFilter
     users?: UserRoleListRelationFilter
     service_roles?: ServiceRoleListRelationFilter
+    tenantUsers?: TenantUserListRelationFilter
   }
 
   export type RoleOrderByWithRelationInput = {
@@ -11979,6 +13291,7 @@ export namespace Prisma {
     permissions?: RolePermissionOrderByRelationAggregateInput
     users?: UserRoleOrderByRelationAggregateInput
     service_roles?: ServiceRoleOrderByRelationAggregateInput
+    tenantUsers?: TenantUserOrderByRelationAggregateInput
   }
 
   export type RoleWhereUniqueInput = Prisma.AtLeast<{
@@ -11991,6 +13304,7 @@ export namespace Prisma {
     permissions?: RolePermissionListRelationFilter
     users?: UserRoleListRelationFilter
     service_roles?: ServiceRoleListRelationFilter
+    tenantUsers?: TenantUserListRelationFilter
   }, "id" | "name">
 
   export type RoleOrderByWithAggregationInput = {
@@ -12421,12 +13735,14 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -12439,12 +13755,14 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -12457,12 +13775,14 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -12475,12 +13795,14 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12493,6 +13815,7 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
@@ -12508,6 +13831,7 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12523,9 +13847,50 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUserCreateInput = {
+    tenant_id: string
+    user: UserCreateNestedOneWithoutTenantUsersInput
+    role: RoleCreateNestedOneWithoutTenantUsersInput
+  }
+
+  export type TenantUserUncheckedCreateInput = {
+    tenant_id: string
+    user_id: string
+    role_id: string
+  }
+
+  export type TenantUserUpdateInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutTenantUsersNestedInput
+    role?: RoleUpdateOneRequiredWithoutTenantUsersNestedInput
+  }
+
+  export type TenantUserUncheckedUpdateInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TenantUserCreateManyInput = {
+    tenant_id: string
+    user_id: string
+    role_id: string
+  }
+
+  export type TenantUserUpdateManyMutationInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TenantUserUncheckedUpdateManyInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type RoleCreateInput = {
@@ -12535,6 +13900,7 @@ export namespace Prisma {
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     users?: UserRoleCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutRoleInput
   }
 
   export type RoleUncheckedCreateInput = {
@@ -12544,6 +13910,7 @@ export namespace Prisma {
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleUncheckedCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type RoleUpdateInput = {
@@ -12553,6 +13920,7 @@ export namespace Prisma {
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     users?: UserRoleUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleUncheckedUpdateInput = {
@@ -12562,6 +13930,7 @@ export namespace Prisma {
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUncheckedUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleCreateManyInput = {
@@ -13022,6 +14391,13 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type EnumUserTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserType | EnumUserTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserTypeFilter<$PrismaModel> | $Enums.UserType
+  }
+
   export type EnumUserStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.UserStatus | EnumUserStatusFieldRefInput<$PrismaModel>
     in?: $Enums.UserStatus[] | ListEnumUserStatusFieldRefInput<$PrismaModel>
@@ -13058,6 +14434,12 @@ export namespace Prisma {
     none?: AuthOtpWhereInput
   }
 
+  export type TenantUserListRelationFilter = {
+    every?: TenantUserWhereInput
+    some?: TenantUserWhereInput
+    none?: TenantUserWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -13075,6 +14457,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type TenantUserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -13085,6 +14471,7 @@ export namespace Prisma {
     verification_token?: SortOrder
     verification_expires?: SortOrder
     two_fa_enabled?: SortOrder
+    user_type?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13100,6 +14487,7 @@ export namespace Prisma {
     verification_token?: SortOrder
     verification_expires?: SortOrder
     two_fa_enabled?: SortOrder
+    user_type?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13115,6 +14503,7 @@ export namespace Prisma {
     verification_token?: SortOrder
     verification_expires?: SortOrder
     two_fa_enabled?: SortOrder
+    user_type?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13178,6 +14567,16 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type EnumUserTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserType | EnumUserTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserTypeFilter<$PrismaModel>
+    _max?: NestedEnumUserTypeFilter<$PrismaModel>
+  }
+
   export type EnumUserStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.UserStatus | EnumUserStatusFieldRefInput<$PrismaModel>
     in?: $Enums.UserStatus[] | ListEnumUserStatusFieldRefInput<$PrismaModel>
@@ -13200,6 +14599,39 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type RoleScalarRelationFilter = {
+    is?: RoleWhereInput
+    isNot?: RoleWhereInput
+  }
+
+  export type TenantUserTenant_idUser_idCompoundUniqueInput = {
+    tenant_id: string
+    user_id: string
+  }
+
+  export type TenantUserCountOrderByAggregateInput = {
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    role_id?: SortOrder
+  }
+
+  export type TenantUserMaxOrderByAggregateInput = {
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    role_id?: SortOrder
+  }
+
+  export type TenantUserMinOrderByAggregateInput = {
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    role_id?: SortOrder
   }
 
   export type RolePermissionListRelationFilter = {
@@ -13278,16 +14710,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPermissionActionFilter<$PrismaModel>
     _max?: NestedEnumPermissionActionFilter<$PrismaModel>
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
-  export type RoleScalarRelationFilter = {
-    is?: RoleWhereInput
-    isNot?: RoleWhereInput
   }
 
   export type UserRoleUser_idRole_idCompoundUniqueInput = {
@@ -13538,6 +14960,13 @@ export namespace Prisma {
     connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
   }
 
+  export type TenantUserCreateNestedManyWithoutUserInput = {
+    create?: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput> | TenantUserCreateWithoutUserInput[] | TenantUserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutUserInput | TenantUserCreateOrConnectWithoutUserInput[]
+    createMany?: TenantUserCreateManyUserInputEnvelope
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+  }
+
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -13559,6 +14988,13 @@ export namespace Prisma {
     connect?: AuthOtpWhereUniqueInput | AuthOtpWhereUniqueInput[]
   }
 
+  export type TenantUserUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput> | TenantUserCreateWithoutUserInput[] | TenantUserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutUserInput | TenantUserCreateOrConnectWithoutUserInput[]
+    createMany?: TenantUserCreateManyUserInputEnvelope
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -13573,6 +15009,10 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type EnumUserTypeFieldUpdateOperationsInput = {
+    set?: $Enums.UserType
   }
 
   export type EnumUserStatusFieldUpdateOperationsInput = {
@@ -13625,6 +15065,20 @@ export namespace Prisma {
     deleteMany?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
   }
 
+  export type TenantUserUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput> | TenantUserCreateWithoutUserInput[] | TenantUserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutUserInput | TenantUserCreateOrConnectWithoutUserInput[]
+    upsert?: TenantUserUpsertWithWhereUniqueWithoutUserInput | TenantUserUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TenantUserCreateManyUserInputEnvelope
+    set?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    disconnect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    delete?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    update?: TenantUserUpdateWithWhereUniqueWithoutUserInput | TenantUserUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TenantUserUpdateManyWithWhereWithoutUserInput | TenantUserUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
+  }
+
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -13667,6 +15121,48 @@ export namespace Prisma {
     deleteMany?: AuthOtpScalarWhereInput | AuthOtpScalarWhereInput[]
   }
 
+  export type TenantUserUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput> | TenantUserCreateWithoutUserInput[] | TenantUserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutUserInput | TenantUserCreateOrConnectWithoutUserInput[]
+    upsert?: TenantUserUpsertWithWhereUniqueWithoutUserInput | TenantUserUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TenantUserCreateManyUserInputEnvelope
+    set?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    disconnect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    delete?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    update?: TenantUserUpdateWithWhereUniqueWithoutUserInput | TenantUserUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TenantUserUpdateManyWithWhereWithoutUserInput | TenantUserUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutTenantUsersInput = {
+    create?: XOR<UserCreateWithoutTenantUsersInput, UserUncheckedCreateWithoutTenantUsersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTenantUsersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type RoleCreateNestedOneWithoutTenantUsersInput = {
+    create?: XOR<RoleCreateWithoutTenantUsersInput, RoleUncheckedCreateWithoutTenantUsersInput>
+    connectOrCreate?: RoleCreateOrConnectWithoutTenantUsersInput
+    connect?: RoleWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutTenantUsersNestedInput = {
+    create?: XOR<UserCreateWithoutTenantUsersInput, UserUncheckedCreateWithoutTenantUsersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTenantUsersInput
+    upsert?: UserUpsertWithoutTenantUsersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTenantUsersInput, UserUpdateWithoutTenantUsersInput>, UserUncheckedUpdateWithoutTenantUsersInput>
+  }
+
+  export type RoleUpdateOneRequiredWithoutTenantUsersNestedInput = {
+    create?: XOR<RoleCreateWithoutTenantUsersInput, RoleUncheckedCreateWithoutTenantUsersInput>
+    connectOrCreate?: RoleCreateOrConnectWithoutTenantUsersInput
+    upsert?: RoleUpsertWithoutTenantUsersInput
+    connect?: RoleWhereUniqueInput
+    update?: XOR<XOR<RoleUpdateToOneWithWhereWithoutTenantUsersInput, RoleUpdateWithoutTenantUsersInput>, RoleUncheckedUpdateWithoutTenantUsersInput>
+  }
+
   export type RolePermissionCreateNestedManyWithoutRoleInput = {
     create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
@@ -13688,6 +15184,13 @@ export namespace Prisma {
     connect?: ServiceRoleWhereUniqueInput | ServiceRoleWhereUniqueInput[]
   }
 
+  export type TenantUserCreateNestedManyWithoutRoleInput = {
+    create?: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput> | TenantUserCreateWithoutRoleInput[] | TenantUserUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutRoleInput | TenantUserCreateOrConnectWithoutRoleInput[]
+    createMany?: TenantUserCreateManyRoleInputEnvelope
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+  }
+
   export type RolePermissionUncheckedCreateNestedManyWithoutRoleInput = {
     create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
@@ -13707,6 +15210,13 @@ export namespace Prisma {
     connectOrCreate?: ServiceRoleCreateOrConnectWithoutRoleInput | ServiceRoleCreateOrConnectWithoutRoleInput[]
     createMany?: ServiceRoleCreateManyRoleInputEnvelope
     connect?: ServiceRoleWhereUniqueInput | ServiceRoleWhereUniqueInput[]
+  }
+
+  export type TenantUserUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput> | TenantUserCreateWithoutRoleInput[] | TenantUserUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutRoleInput | TenantUserCreateOrConnectWithoutRoleInput[]
+    createMany?: TenantUserCreateManyRoleInputEnvelope
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
   }
 
   export type RolePermissionUpdateManyWithoutRoleNestedInput = {
@@ -13751,6 +15261,20 @@ export namespace Prisma {
     deleteMany?: ServiceRoleScalarWhereInput | ServiceRoleScalarWhereInput[]
   }
 
+  export type TenantUserUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput> | TenantUserCreateWithoutRoleInput[] | TenantUserUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutRoleInput | TenantUserCreateOrConnectWithoutRoleInput[]
+    upsert?: TenantUserUpsertWithWhereUniqueWithoutRoleInput | TenantUserUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: TenantUserCreateManyRoleInputEnvelope
+    set?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    disconnect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    delete?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    update?: TenantUserUpdateWithWhereUniqueWithoutRoleInput | TenantUserUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: TenantUserUpdateManyWithWhereWithoutRoleInput | TenantUserUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
+  }
+
   export type RolePermissionUncheckedUpdateManyWithoutRoleNestedInput = {
     create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
@@ -13791,6 +15315,20 @@ export namespace Prisma {
     update?: ServiceRoleUpdateWithWhereUniqueWithoutRoleInput | ServiceRoleUpdateWithWhereUniqueWithoutRoleInput[]
     updateMany?: ServiceRoleUpdateManyWithWhereWithoutRoleInput | ServiceRoleUpdateManyWithWhereWithoutRoleInput[]
     deleteMany?: ServiceRoleScalarWhereInput | ServiceRoleScalarWhereInput[]
+  }
+
+  export type TenantUserUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput> | TenantUserCreateWithoutRoleInput[] | TenantUserUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: TenantUserCreateOrConnectWithoutRoleInput | TenantUserCreateOrConnectWithoutRoleInput[]
+    upsert?: TenantUserUpsertWithWhereUniqueWithoutRoleInput | TenantUserUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: TenantUserCreateManyRoleInputEnvelope
+    set?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    disconnect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    delete?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    connect?: TenantUserWhereUniqueInput | TenantUserWhereUniqueInput[]
+    update?: TenantUserUpdateWithWhereUniqueWithoutRoleInput | TenantUserUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: TenantUserUpdateManyWithWhereWithoutRoleInput | TenantUserUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
   }
 
   export type RolePermissionCreateNestedManyWithoutPermissionInput = {
@@ -14049,6 +15587,13 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedEnumUserTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserType | EnumUserTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserTypeFilter<$PrismaModel> | $Enums.UserType
+  }
+
   export type NestedEnumUserStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.UserStatus | EnumUserStatusFieldRefInput<$PrismaModel>
     in?: $Enums.UserStatus[] | ListEnumUserStatusFieldRefInput<$PrismaModel>
@@ -14143,6 +15688,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumUserTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserType | EnumUserTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserType[] | ListEnumUserTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserTypeFilter<$PrismaModel>
+    _max?: NestedEnumUserTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumUserStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -14310,6 +15865,26 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TenantUserCreateWithoutUserInput = {
+    tenant_id: string
+    role: RoleCreateNestedOneWithoutTenantUsersInput
+  }
+
+  export type TenantUserUncheckedCreateWithoutUserInput = {
+    tenant_id: string
+    role_id: string
+  }
+
+  export type TenantUserCreateOrConnectWithoutUserInput = {
+    where: TenantUserWhereUniqueInput
+    create: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput>
+  }
+
+  export type TenantUserCreateManyUserInputEnvelope = {
+    data: TenantUserCreateManyUserInput | TenantUserCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserRoleUpsertWithWhereUniqueWithoutUserInput = {
     where: UserRoleWhereUniqueInput
     update: XOR<UserRoleUpdateWithoutUserInput, UserRoleUncheckedUpdateWithoutUserInput>
@@ -14395,6 +15970,175 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"AuthOtp"> | Date | string
   }
 
+  export type TenantUserUpsertWithWhereUniqueWithoutUserInput = {
+    where: TenantUserWhereUniqueInput
+    update: XOR<TenantUserUpdateWithoutUserInput, TenantUserUncheckedUpdateWithoutUserInput>
+    create: XOR<TenantUserCreateWithoutUserInput, TenantUserUncheckedCreateWithoutUserInput>
+  }
+
+  export type TenantUserUpdateWithWhereUniqueWithoutUserInput = {
+    where: TenantUserWhereUniqueInput
+    data: XOR<TenantUserUpdateWithoutUserInput, TenantUserUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TenantUserUpdateManyWithWhereWithoutUserInput = {
+    where: TenantUserScalarWhereInput
+    data: XOR<TenantUserUpdateManyMutationInput, TenantUserUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type TenantUserScalarWhereInput = {
+    AND?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
+    OR?: TenantUserScalarWhereInput[]
+    NOT?: TenantUserScalarWhereInput | TenantUserScalarWhereInput[]
+    tenant_id?: StringFilter<"TenantUser"> | string
+    user_id?: StringFilter<"TenantUser"> | string
+    role_id?: StringFilter<"TenantUser"> | string
+  }
+
+  export type UserCreateWithoutTenantUsersInput = {
+    id?: string
+    name?: string | null
+    mobile?: string | null
+    email: string
+    username: string
+    password_hash: string
+    verification_token?: string | null
+    verification_expires?: Date | string | null
+    two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
+    status?: $Enums.UserStatus
+    created_at?: Date | string
+    updated_at?: Date | string
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTenantUsersInput = {
+    id?: string
+    name?: string | null
+    mobile?: string | null
+    email: string
+    username: string
+    password_hash: string
+    verification_token?: string | null
+    verification_expires?: Date | string | null
+    two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
+    status?: $Enums.UserStatus
+    created_at?: Date | string
+    updated_at?: Date | string
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTenantUsersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTenantUsersInput, UserUncheckedCreateWithoutTenantUsersInput>
+  }
+
+  export type RoleCreateWithoutTenantUsersInput = {
+    id?: string
+    name: string
+    description?: string | null
+    permissions?: RolePermissionCreateNestedManyWithoutRoleInput
+    users?: UserRoleCreateNestedManyWithoutRoleInput
+    service_roles?: ServiceRoleCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleUncheckedCreateWithoutTenantUsersInput = {
+    id?: string
+    name: string
+    description?: string | null
+    permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+    users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
+    service_roles?: ServiceRoleUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleCreateOrConnectWithoutTenantUsersInput = {
+    where: RoleWhereUniqueInput
+    create: XOR<RoleCreateWithoutTenantUsersInput, RoleUncheckedCreateWithoutTenantUsersInput>
+  }
+
+  export type UserUpsertWithoutTenantUsersInput = {
+    update: XOR<UserUpdateWithoutTenantUsersInput, UserUncheckedUpdateWithoutTenantUsersInput>
+    create: XOR<UserCreateWithoutTenantUsersInput, UserUncheckedCreateWithoutTenantUsersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTenantUsersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTenantUsersInput, UserUncheckedUpdateWithoutTenantUsersInput>
+  }
+
+  export type UserUpdateWithoutTenantUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    mobile?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    verification_token?: NullableStringFieldUpdateOperationsInput | string | null
+    verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTenantUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    mobile?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    verification_token?: NullableStringFieldUpdateOperationsInput | string | null
+    verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type RoleUpsertWithoutTenantUsersInput = {
+    update: XOR<RoleUpdateWithoutTenantUsersInput, RoleUncheckedUpdateWithoutTenantUsersInput>
+    create: XOR<RoleCreateWithoutTenantUsersInput, RoleUncheckedCreateWithoutTenantUsersInput>
+    where?: RoleWhereInput
+  }
+
+  export type RoleUpdateToOneWithWhereWithoutTenantUsersInput = {
+    where?: RoleWhereInput
+    data: XOR<RoleUpdateWithoutTenantUsersInput, RoleUncheckedUpdateWithoutTenantUsersInput>
+  }
+
+  export type RoleUpdateWithoutTenantUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
+    users?: UserRoleUpdateManyWithoutRoleNestedInput
+    service_roles?: ServiceRoleUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateWithoutTenantUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+    users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
+    service_roles?: ServiceRoleUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
   export type RolePermissionCreateWithoutRoleInput = {
     permission: PermissionCreateNestedOneWithoutRolesInput
   }
@@ -14448,6 +16192,26 @@ export namespace Prisma {
 
   export type ServiceRoleCreateManyRoleInputEnvelope = {
     data: ServiceRoleCreateManyRoleInput | ServiceRoleCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TenantUserCreateWithoutRoleInput = {
+    tenant_id: string
+    user: UserCreateNestedOneWithoutTenantUsersInput
+  }
+
+  export type TenantUserUncheckedCreateWithoutRoleInput = {
+    tenant_id: string
+    user_id: string
+  }
+
+  export type TenantUserCreateOrConnectWithoutRoleInput = {
+    where: TenantUserWhereUniqueInput
+    create: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput>
+  }
+
+  export type TenantUserCreateManyRoleInputEnvelope = {
+    data: TenantUserCreateManyRoleInput | TenantUserCreateManyRoleInput[]
     skipDuplicates?: boolean
   }
 
@@ -14516,6 +16280,22 @@ export namespace Prisma {
     role_id?: StringFilter<"ServiceRole"> | string
   }
 
+  export type TenantUserUpsertWithWhereUniqueWithoutRoleInput = {
+    where: TenantUserWhereUniqueInput
+    update: XOR<TenantUserUpdateWithoutRoleInput, TenantUserUncheckedUpdateWithoutRoleInput>
+    create: XOR<TenantUserCreateWithoutRoleInput, TenantUserUncheckedCreateWithoutRoleInput>
+  }
+
+  export type TenantUserUpdateWithWhereUniqueWithoutRoleInput = {
+    where: TenantUserWhereUniqueInput
+    data: XOR<TenantUserUpdateWithoutRoleInput, TenantUserUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type TenantUserUpdateManyWithWhereWithoutRoleInput = {
+    where: TenantUserScalarWhereInput
+    data: XOR<TenantUserUpdateManyMutationInput, TenantUserUncheckedUpdateManyWithoutRoleInput>
+  }
+
   export type RolePermissionCreateWithoutPermissionInput = {
     role: RoleCreateNestedOneWithoutPermissionsInput
   }
@@ -14560,11 +16340,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolesInput = {
@@ -14577,11 +16359,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolesInput = {
@@ -14595,6 +16379,7 @@ export namespace Prisma {
     description?: string | null
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutRoleInput
   }
 
   export type RoleUncheckedCreateWithoutUsersInput = {
@@ -14603,6 +16388,7 @@ export namespace Prisma {
     description?: string | null
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleUncheckedCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type RoleCreateOrConnectWithoutUsersInput = {
@@ -14631,11 +16417,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolesInput = {
@@ -14648,11 +16436,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -14672,6 +16462,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleUncheckedUpdateWithoutUsersInput = {
@@ -14680,6 +16471,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUncheckedUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleCreateWithoutPermissionsInput = {
@@ -14688,6 +16480,7 @@ export namespace Prisma {
     description?: string | null
     users?: UserRoleCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutRoleInput
   }
 
   export type RoleUncheckedCreateWithoutPermissionsInput = {
@@ -14696,6 +16489,7 @@ export namespace Prisma {
     description?: string | null
     users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
     service_roles?: ServiceRoleUncheckedCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type RoleCreateOrConnectWithoutPermissionsInput = {
@@ -14737,6 +16531,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserRoleUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleUncheckedUpdateWithoutPermissionsInput = {
@@ -14745,6 +16540,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
     service_roles?: ServiceRoleUncheckedUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type PermissionUpsertWithoutRolesInput = {
@@ -14780,11 +16576,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRefresh_tokensInput = {
@@ -14797,11 +16595,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     authOtps?: AuthOtpUncheckedCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRefresh_tokensInput = {
@@ -14830,11 +16630,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefresh_tokensInput = {
@@ -14847,11 +16649,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     authOtps?: AuthOtpUncheckedUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ServiceRoleCreateWithoutService_clientInput = {
@@ -14923,6 +16727,7 @@ export namespace Prisma {
     description?: string | null
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     users?: UserRoleCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutRoleInput
   }
 
   export type RoleUncheckedCreateWithoutService_rolesInput = {
@@ -14931,6 +16736,7 @@ export namespace Prisma {
     description?: string | null
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type RoleCreateOrConnectWithoutService_rolesInput = {
@@ -14988,6 +16794,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     users?: UserRoleUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutRoleNestedInput
   }
 
   export type RoleUncheckedUpdateWithoutService_rolesInput = {
@@ -14996,6 +16803,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type UserCreateWithoutAuthOtpsInput = {
@@ -15008,11 +16816,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAuthOtpsInput = {
@@ -15025,11 +16835,13 @@ export namespace Prisma {
     verification_token?: string | null
     verification_expires?: Date | string | null
     two_fa_enabled?: boolean
+    user_type?: $Enums.UserType
     status?: $Enums.UserStatus
     created_at?: Date | string
     updated_at?: Date | string
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     refresh_tokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    tenantUsers?: TenantUserUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAuthOtpsInput = {
@@ -15058,11 +16870,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuthOtpsInput = {
@@ -15075,11 +16889,13 @@ export namespace Prisma {
     verification_token?: NullableStringFieldUpdateOperationsInput | string | null
     verification_expires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     two_fa_enabled?: BoolFieldUpdateOperationsInput | boolean
+    user_type?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     refresh_tokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    tenantUsers?: TenantUserUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserRoleCreateManyUserInput = {
@@ -15105,6 +16921,11 @@ export namespace Prisma {
     expires_at: Date | string
     consumed_at?: Date | string | null
     created_at?: Date | string
+  }
+
+  export type TenantUserCreateManyUserInput = {
+    tenant_id: string
+    role_id: string
   }
 
   export type UserRoleUpdateWithoutUserInput = {
@@ -15182,6 +17003,21 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TenantUserUpdateWithoutUserInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role?: RoleUpdateOneRequiredWithoutTenantUsersNestedInput
+  }
+
+  export type TenantUserUncheckedUpdateWithoutUserInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TenantUserUncheckedUpdateManyWithoutUserInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+  }
+
   export type RolePermissionCreateManyRoleInput = {
     permission_id: string
   }
@@ -15193,6 +17029,11 @@ export namespace Prisma {
   export type ServiceRoleCreateManyRoleInput = {
     id?: string
     service_client_id: string
+  }
+
+  export type TenantUserCreateManyRoleInput = {
+    tenant_id: string
+    user_id: string
   }
 
   export type RolePermissionUpdateWithoutRoleInput = {
@@ -15232,6 +17073,21 @@ export namespace Prisma {
   export type ServiceRoleUncheckedUpdateManyWithoutRoleInput = {
     id?: StringFieldUpdateOperationsInput | string
     service_client_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TenantUserUpdateWithoutRoleInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutTenantUsersNestedInput
+  }
+
+  export type TenantUserUncheckedUpdateWithoutRoleInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TenantUserUncheckedUpdateManyWithoutRoleInput = {
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type RolePermissionCreateManyPermissionInput = {

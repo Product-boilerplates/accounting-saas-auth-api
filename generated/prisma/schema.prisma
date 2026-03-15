@@ -25,12 +25,30 @@ model User {
   verification_token   String?
   verification_expires DateTime?
   two_fa_enabled       Boolean        @default(false)
+  user_type            UserType       @default(TENANT_USER)
   status               UserStatus     @default(PENDING_VERIFICATION)
   created_at           DateTime       @default(now())
   updated_at           DateTime       @updatedAt
   roles                UserRole[]
   refresh_tokens       RefreshToken[]
   authOtps             AuthOtp[]
+  tenantUsers          TenantUser[]
+}
+
+enum UserType {
+  PLATFORM_ADMIN
+  TENANT_USER
+}
+
+model TenantUser {
+  tenant_id String
+  user_id   String
+  role_id   String
+
+  user User @relation(fields: [user_id], references: [id])
+  role Role @relation(fields: [role_id], references: [id])
+
+  @@id([tenant_id, user_id])
 }
 
 enum UserStatus {
@@ -63,6 +81,7 @@ model Role {
   permissions   RolePermission[]
   users         UserRole[]
   service_roles ServiceRole[]
+  tenantUsers   TenantUser[]
 }
 
 model Permission {
