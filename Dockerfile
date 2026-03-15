@@ -1,48 +1,43 @@
-# ---------- Builder ----------
+# ---------- Builder Stage ----------
 FROM node:22-alpine AS builder
+
 WORKDIR /app
 
-RUN apk add --no-cache openssl
+# install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
+# copy dependency files
 COPY package.json pnpm-lock.yaml ./
 
-RUN npm install -g pnpm
+# install dependencies
 RUN pnpm install --frozen-lockfile
 
-COPY prisma ./prisma
-RUN npx prisma generate
-
+# copy source
 COPY . .
 
+# generate prisma client
+RUN npx prisma generate
+
+# build typescript
 RUN pnpm build
 
 
-# ---------- Runtime ----------
+# ---------- Production Stage ----------
 FROM node:22-alpine
+
 WORKDIR /app
 
-RUN apk add --no-cache openssl
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-ENV NODE_ENV=production
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN npm install -g pnpm prisma
-RUN pnpm install --prod --frozen-lockfile
-
+# copy only necessary files
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
-COPY .env.production .env.production
 
-RUN addgroup -S nodejs -g 1001
-RUN adduser -S nodejs -u 1001
-RUN chown -R nodejs:nodejs /app
-RUN chmod +x ./entrypoint.sh
+# expose port
+EXPOSE 4000
 
-USER nodejs
-
-EXPOSE 4040
-
-ENTRYPOINT ["./entrypoint.sh"]
+# start server
+CMD ["node", "dist/server.js"]

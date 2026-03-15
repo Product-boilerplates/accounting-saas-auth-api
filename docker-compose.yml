@@ -1,59 +1,38 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  postgres:
-    image: postgres:17-alpine
-    container_name: auth_postgres
-    environment:
-      POSTGRES_USER: auth_admin
-      POSTGRES_PASSWORD: db_admin_pass
-      POSTGRES_DB: auth_db
+  api:
+    build: .
+    container_name: node_api
+    restart: always
     ports:
-      - "5433:5432"
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app_db
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U auth_admin -d auth_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - auth_network
 
   redis:
     image: redis:7-alpine
-    container_name: auth_redis
-    restart: unless-stopped
-    ports:
-      - "6380:6379"
-    networks:
-      - auth_network
-
-  app:
-    build: .
-    container_name: auth_app
-    ports:
-      - "4040:4040"
-    environment:
-      - DATABASE_URL
-      - REDIS_URL
-      - NODE_ENV
-      - PORT
-    env_file:
-      - .env.production
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    restart: unless-stopped
-    networks:
-      - auth_network
+    container_name: redis_cache
+    restart: always
+    volumes:
+      - redis_data:/data
 
 volumes:
   postgres_data:
-
-networks:
-  auth_network:
-    driver: bridge
+  redis_data:
