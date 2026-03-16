@@ -39,12 +39,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.5.0
+ * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
  */
 Prisma.prismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.5.0",
+  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -241,8 +241,8 @@ exports.Prisma.ModelName = {
  */
 const config = {
   "previewFeatures": [],
-  "clientVersion": "7.4.1",
-  "engineVersion": "55ae170b1ced7fc6ed07a15f110549408c501bb3",
+  "clientVersion": "7.5.0",
+  "engineVersion": "280c870be64f457428992c43c1f6d557fab6e29e",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n/**\n * *=======================**\n * ====== Module ==========\n * *=======================*\n */\n\n// User Models\n\nmodel User {\n  id                   String         @id @default(cuid())\n  name                 String?\n  mobile               String?\n  email                String         @unique\n  username             String         @unique\n  password_hash        String\n  verification_token   String?\n  verification_expires DateTime?\n  two_fa_enabled       Boolean        @default(false)\n  user_type            UserType       @default(TENANT_USER)\n  status               UserStatus     @default(PENDING_VERIFICATION)\n  created_at           DateTime       @default(now())\n  updated_at           DateTime       @updatedAt\n  roles                UserRole[]\n  refresh_tokens       RefreshToken[]\n  authOtps             AuthOtp[]\n  tenantUsers          TenantUser[]\n}\n\nenum UserType {\n  PLATFORM_ADMIN\n  TENANT_USER\n}\n\nmodel TenantUser {\n  tenant_id String\n  user_id   String\n  role_id   String\n\n  user User @relation(fields: [user_id], references: [id])\n  role Role @relation(fields: [role_id], references: [id])\n\n  @@id([tenant_id, user_id])\n}\n\nenum UserStatus {\n  UNVERIFIED\n  PENDING_VERIFICATION\n  ACTIVE\n  ONLINE\n  OFFLINE\n  AWAY\n  SUSPENDED\n  BANNED\n  RESTRICTED\n  INACTIVE\n  DELETED\n  ARCHIVED\n}\n\n// Role Models\nenum PermissionAction {\n  CREATE\n  READ\n  UPDATE\n  DELETE\n}\n\nmodel Role {\n  id            String           @id @default(cuid())\n  name          String           @unique\n  description   String?\n  permissions   RolePermission[]\n  users         UserRole[]\n  service_roles ServiceRole[]\n  tenantUsers   TenantUser[]\n}\n\nmodel Permission {\n  id       String           @id @default(uuid())\n  resource String // e.g. \"booking\", \"flight\", \"user\"\n  action   PermissionAction\n\n  roles RolePermission[]\n\n  @@unique([resource, action])\n}\n\nmodel UserRole {\n  user_id String\n  role_id String\n\n  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)\n\n  @@id([user_id, role_id])\n}\n\nmodel RolePermission {\n  role_id       String\n  permission_id String\n\n  role       Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)\n  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)\n\n  @@id([role_id, permission_id])\n}\n\nmodel RefreshToken {\n  id             String   @id @default(cuid())\n  token_hash     String   @unique\n  user_id        String\n  revoked        Boolean  @default(false)\n  created_at     DateTime @default(now())\n  device_id      String?\n  device_name    String?\n  replaced_by_id String?\n  expires_at     DateTime\n  user           User     @relation(fields: [user_id], references: [id])\n}\n\n// Service Models\nmodel ServiceClient {\n  id                 String        @id @default(cuid())\n  client_id          String        @unique\n  client_secret_hash String\n  name               String\n  description        String?\n  is_active          Boolean       @default(true)\n  created_at         DateTime      @default(now())\n  updated_at         DateTime      @updatedAt\n  roles              ServiceRole[]\n}\n\nmodel ServiceRole {\n  id                String        @id @default(cuid())\n  service_client    ServiceClient @relation(fields: [service_client_id], references: [id])\n  service_client_id String\n  role              Role          @relation(fields: [role_id], references: [id])\n  role_id           String\n\n  @@unique([service_client_id, role_id])\n}\n\n/**\n * Auth Otp\n */\nmodel AuthOtp {\n  id          String    @id @default(cuid())\n  user_id     String\n  type        OtpType\n  otp_hash    String\n  attempts    Int       @default(0)\n  expires_at  DateTime\n  consumed_at DateTime?\n  created_at  DateTime  @default(now())\n\n  user User @relation(fields: [user_id], references: [id])\n\n  @@index([user_id])\n}\n\nenum OtpType {\n  LOGIN_2FA\n  EMAIL_VERIFICATION\n  PASSWORD_RESET\n}\n\n/**\n * *======================**\n * ====== Enums ==========\n * *======================*\n */\n"
 }

@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { logger } from "../utils/logger";
 
 import { CacheService } from "./cache.service";
 import { MemoryProvider } from "./providers/memory.cache";
@@ -16,6 +17,19 @@ const redisClient = new Redis({
   retryStrategy(times) {
     return Math.min(times * 50, 2000);
   },
+});
+
+// Redis connection events
+redisClient.on("connect", () => {
+  logger.info("✅ Redis connected successfully");
+});
+
+redisClient.on("error", (err) => {
+  logger.error(`❌ Redis Error: ${err.message}`);
+});
+
+redisClient.on("close", () => {
+  logger.warn("⚠️ Redis connection closed");
 });
 
 // ---------- L1 Memory Cache ----------

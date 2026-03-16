@@ -137,7 +137,9 @@ export const OtpType: typeof $Enums.OtpType
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
- * const prisma = new PrismaClient()
+ * const prisma = new PrismaClient({
+ *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+ * })
  * // Fetch zero or more Users
  * const users = await prisma.user.findMany()
  * ```
@@ -158,7 +160,9 @@ export class PrismaClient<
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
-   * const prisma = new PrismaClient()
+   * const prisma = new PrismaClient({
+   *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * })
    * // Fetch zero or more Users
    * const users = await prisma.user.findMany()
    * ```
@@ -397,8 +401,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.4.1
-   * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+   * Prisma Client JS version: 7.5.0
+   * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
    */
   export type PrismaVersion = {
     client: string
@@ -2877,6 +2881,11 @@ export namespace Prisma {
      * Skip the first `n` Users.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Users.
+     */
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
@@ -4005,6 +4014,11 @@ export namespace Prisma {
      * Skip the first `n` TenantUsers.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantUsers.
+     */
     distinct?: TenantUserScalarFieldEnum | TenantUserScalarFieldEnum[]
   }
 
@@ -5045,6 +5059,11 @@ export namespace Prisma {
      * Skip the first `n` Roles.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Roles.
+     */
     distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
   }
 
@@ -6161,6 +6180,11 @@ export namespace Prisma {
      * Skip the first `n` Permissions.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Permissions.
+     */
     distinct?: PermissionScalarFieldEnum | PermissionScalarFieldEnum[]
   }
 
@@ -7204,6 +7228,11 @@ export namespace Prisma {
      * Skip the first `n` UserRoles.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserRoles.
+     */
     distinct?: UserRoleScalarFieldEnum | UserRoleScalarFieldEnum[]
   }
 
@@ -8231,6 +8260,11 @@ export namespace Prisma {
      * Skip the first `n` RolePermissions.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RolePermissions.
+     */
     distinct?: RolePermissionScalarFieldEnum | RolePermissionScalarFieldEnum[]
   }
 
@@ -9341,6 +9375,11 @@ export namespace Prisma {
      * Skip the first `n` RefreshTokens.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RefreshTokens.
+     */
     distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
   }
 
@@ -10434,6 +10473,11 @@ export namespace Prisma {
      * Skip the first `n` ServiceClients.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceClients.
+     */
     distinct?: ServiceClientScalarFieldEnum | ServiceClientScalarFieldEnum[]
   }
 
@@ -11490,6 +11534,11 @@ export namespace Prisma {
      * Skip the first `n` ServiceRoles.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceRoles.
+     */
     distinct?: ServiceRoleScalarFieldEnum | ServiceRoleScalarFieldEnum[]
   }
 
@@ -12621,6 +12670,11 @@ export namespace Prisma {
      * Skip the first `n` AuthOtps.
      */
     skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuthOtps.
+     */
     distinct?: AuthOtpScalarFieldEnum | AuthOtpScalarFieldEnum[]
   }
 

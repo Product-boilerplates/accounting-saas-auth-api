@@ -22,16 +22,19 @@ export function errorHandler(
 
   // Prisma known errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    switch (err.errorCode) {
+    switch ((err as any).code) {
       case "P2002":
-        customError = new AppError(`Duplicate field: ${err.meta?.target}`, {
-          statusCode: 409,
-          errorCode: "DUPLICATE_ENTRY",
-        });
+        customError = new AppError(
+          `Duplicate field: ${(err as any).meta?.target}`,
+          {
+            statusCode: 409,
+            errorCode: "DUPLICATE_ENTRY",
+          },
+        );
         break;
       case "P2003":
         customError = new AppError(
-          `Foreign key constraint failed on field: ${err.meta?.field_name}`,
+          `Foreign key constraint failed on field: ${(err as any).meta?.field_name}`,
           {
             statusCode: 400,
             errorCode: "FOREIGN_KEY_ERROR",
