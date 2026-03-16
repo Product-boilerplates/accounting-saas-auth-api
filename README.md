@@ -84,4 +84,4 @@ pnpm install
 cp .env.example .env
 pnpm docker:up
 pnpm prisma:migrate\pnpm dev
-Access Swagger Docs → http://localhost:4000/docs
+Access Swagger Docs → http://localhost:4040/docs

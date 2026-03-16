@@ -15,6 +15,7 @@ RUN pnpm install --frozen-lockfile
 # copy source
 COPY . .
 
+
 # generate prisma client
 RUN npx prisma generate
 
@@ -37,7 +38,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
 # expose port
-EXPOSE 4000
+EXPOSE 4040
 
 # start server
-CMD ["node", "dist/server.js"]
+CMD ["pnpm", "start"]
