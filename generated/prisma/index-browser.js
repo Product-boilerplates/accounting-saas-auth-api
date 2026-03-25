@@ -220,6 +220,7 @@ exports.Prisma.NullsOrder = {
 };
 exports.UserType = exports.$Enums.UserType = {
   PLATFORM_ADMIN: 'PLATFORM_ADMIN',
+  TENANT_ADMIN: 'TENANT_ADMIN',
   TENANT_USER: 'TENANT_USER'
 };
 

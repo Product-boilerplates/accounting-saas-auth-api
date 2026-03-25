@@ -4,11 +4,10 @@ import mailer from "../mail/mailer";
 import { logger } from "../utils/logger";
 import { Event } from "./event-bul.service";
 
-interface LoginInitiate {
-  userId: string;
+export interface LoginInitiate {
   email: string;
   name: string;
-  verificationLink: string;
+  verificationUrl: string;
 }
 interface OtpSend2Fa {
   userId: string;
@@ -24,7 +23,7 @@ export const emailEvents = (eventBus: any) => {
   eventBus.subscribe(
     "email_verification:signup",
     async (event: Event<LoginInitiate>) => {
-      const { email, name, verificationLink } = event.payload;
+      const { email, name, verificationUrl } = event.payload;
 
       try {
         //  Send email
@@ -33,7 +32,7 @@ export const emailEvents = (eventBus: any) => {
           templateName: "verify-email",
           templateData: {
             name,
-            verificationLink,
+            verificationUrl,
           },
         });
 
@@ -52,21 +51,31 @@ export const emailEvents = (eventBus: any) => {
   eventBus.subscribe("auth:2fa_login_otp", async (event: Event<OtpSend2Fa>) => {
     const { email, name, otp } = event.payload;
 
+    // 25 Mar, 2026
+    const date = new Date().toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
     try {
       //  Send email
       await mailer.sendEmail(email, {
         subject: "Your Two-Factor Authentication Code",
         templateName: "2fa-otp",
         templateData: {
+          date,
           name,
           otp,
         },
       });
 
-      logger.info(`Email signup verification sent to ${email} successfully.`);
+      logger.info(
+        `✅ Email signup verification sent to ${email} successfully.`,
+      );
     } catch (err) {
       logger.error(
-        `Failed to send email signup verification to ${email}:`,
+        `❌ Failed to send email signup verification to ${email}:`,
         err,
       );
     }

@@ -21,7 +21,7 @@ async function userSeed() {
   }
 
   // 🔐 Hash passwords
-  const superAdminPassword = await argon2.hash("SuperAdmin@123");
+  const superAdminPassword = await argon2.hash("Admin@123");
   const adminPassword = await argon2.hash("Admin@123");
   const userPassword = await argon2.hash("User@123");
 
@@ -29,15 +29,16 @@ async function userSeed() {
   // SUPER ADMIN
   // -------------------------
   const superAdmin = await prisma.user.upsert({
-    where: { email: "super_admin@example.com" },
+    where: { email: "nariaholidays.dev@gmail.com" },
     update: {},
     create: {
-      email: "super_admin@example.com",
-      username: "super_admin",
+      email: "nariaholidays.dev@gmail.com",
+      username: "admin",
       name: "System Super Admin",
       password_hash: superAdminPassword,
       status: "ACTIVE" as const,
       user_type: "PLATFORM_ADMIN",
+      two_fa_enabled: true,
     },
   });
 
@@ -63,7 +64,7 @@ async function userSeed() {
     update: {},
     create: {
       email: "admin@example.com",
-      username: "admin",
+      username: "admin2",
       name: "Admin User",
       password_hash: adminPassword,
       status: "ACTIVE" as const,

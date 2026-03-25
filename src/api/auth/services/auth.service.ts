@@ -2,10 +2,12 @@ import crypto from "crypto";
 import { authService } from ".";
 import { OtpType } from "../../../../generated/prisma";
 import { BaseService } from "../../../core/base";
+import { cacheService } from "../../../core/cache";
 import {
   throwUnauthorized,
   throwValidation,
 } from "../../../core/errors/errors";
+import { LoginInitiate } from "../../../core/events/email.events";
 import { eventBus } from "../../../core/events/event-bul.service";
 import { OtpUtils, PasswordUtil } from "../../../core/utils";
 import { ServiceReturnDto } from "../../../core/utils/responseHandler";
@@ -17,6 +19,8 @@ import {
   RefreshTokenDto,
   RegisterServicePayload,
   SERVICE_GRANT_TYPE,
+  SigninDto,
+  SignupDto,
   VerifyOtpDto,
 } from "../auth.types";
 import { AuthUtils } from "../utils";
@@ -26,21 +30,30 @@ import {
   generateServiceToken,
   verifyAccessToken,
 } from "../utils/token.util";
-import { cacheService } from "../../../core/cache";
 
 export class AuthService extends BaseService {
   /**
    * Signup
    */
-  async signup(payload: any) {
+  async signup(payload: SignupDto) {
     const { name, email, password, username } = payload;
 
-    const exists = await this.db.user.findFirst({
-      where: { OR: [{ email }, { username }] },
+    // Check if email already exists
+    const emailExists = await this.db.user.findFirst({
+      where: { email },
     });
 
-    if (exists) {
-      throwValidation("User already exists");
+    if (emailExists) {
+      throwValidation("Email already exists");
+    }
+
+    // Check if username already exists
+    const usernameExists = await this.db.user.findFirst({
+      where: { username },
+    });
+
+    if (usernameExists) {
+      throwValidation("Username already exists");
     }
 
     const passwordHash = await PasswordUtil.hash(password);
@@ -63,23 +76,24 @@ export class AuthService extends BaseService {
 
     const link = `${process.env.CLIENT_URL}/verify-email?token=${verifyToken}`;
 
-    eventBus.publish("email_verification:signup", {
-      email: user.email,
-      name: user.name,
-      verificationLink: link,
+    eventBus.publish<LoginInitiate>("email_verification:signup", {
+      email: user.email || "",
+      name: user.name || "",
+      verificationUrl: link,
     });
 
     return { message: "Registration successful. Check email." };
   }
 
   /**
-   * Signin
+   * Admin Signin
    */
-  async signin(payload: any): Promise<any> {
+  async adminSignin(payload: SigninDto): Promise<any> {
     const { identifier, password, trustDevice } = payload;
 
     const user = await this.db.user.findFirst({
       where: {
+        user_type: "PLATFORM_ADMIN",
         OR: [{ email: identifier }, { username: identifier }],
       },
     });
@@ -152,6 +166,151 @@ export class AuthService extends BaseService {
     /**
      * Final response
      */
+
+    return {
+      message: "Signin successful",
+      data: {
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+        device: {
+          trustedDeviceToken,
+        },
+      },
+    };
+  }
+
+  /**
+   * Signin
+   */
+  async signin(payload: SigninDto): Promise<any> {
+    const { identifier, password, trustDevice } = payload;
+
+    const user = await this.db.user.findFirst({
+      where: {
+        user_type: { in: ["TENANT_USER", "TENANT_ADMIN"] },
+        OR: [{ email: identifier }, { username: identifier }],
+      },
+    });
+
+    // Prevent user enumeration
+    if (!user) {
+      return this.throwUnauthorized("Invalid credentials");
+    }
+
+    if (user.status !== "ACTIVE") {
+      this.throwUnauthorized("Account is not active");
+    }
+
+    const isPasswordValid = await PasswordUtil.compare(
+      password,
+      user.password_hash,
+    );
+
+    if (!isPasswordValid) {
+      return this.throwUnauthorized("Invalid credentials");
+    }
+
+    /**
+     * Handle 2FA flow
+     */
+    if (user.two_fa_enabled) {
+      const otp = OtpUtils.generateOtp();
+
+      await this.optStore(user.id, otp);
+
+      eventBus.publish("auth:2fa_login_otp", {
+        email: user.email,
+        name: user.name,
+        otp,
+      });
+
+      const tempToken = tempTokenUtils.generateTempToken({
+        id: user.id,
+      });
+
+      return {
+        message: "Two-factor authentication required",
+        data: {
+          twoFactorRequired: true,
+          tempToken,
+        },
+      };
+    }
+
+    /**
+     * Generate tokens
+     */
+    const accessToken = generateAccessToken({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    });
+
+    const refreshToken = await authService.refreshToken.createToken(user.id);
+
+    /**
+     * Trusted device
+     */
+    let trustedDeviceToken: string | null = null;
+
+    if (trustDevice) {
+      trustedDeviceToken = await authService.trustedDevice.markTrusted(user.id);
+    }
+
+    /**
+     * Final response
+     */
+
+    // ---- for tenant select
+    /*
+    {
+    "preAuthToken": "...",
+    "expiresIn": 300
+    }
+
+    {
+    userId: "u1",
+    type: "PRE_AUTH"
+    }
+
+
+    ===Tenant token===
+    {
+    userId: "u1",
+    tenantId: "t1",
+    role: "TENANT_ADMIN",
+    type: "TENANT"
+    }
+
+
+    const access = await prisma.userTenant.findFirst({
+    where: {
+      userId: token.userId,
+      tenantId: input.tenantId
+    }
+    });
+
+    if (!access) throw new Error("Unauthorized tenant access");
+
+
+    ===Login Response===
+    {
+    "preAuthToken": "...",
+    "user": {...},
+    "tenants": [...]
+    }
+
+    ===Select Tenant Response===
+    {
+    "accessToken": "...",
+    "refreshToken": "...",
+    "role": "TENANT_ADMIN"
+    }
+
+    */
+    // preAuthToken
 
     return {
       message: "Signin successful",

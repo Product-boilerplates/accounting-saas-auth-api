@@ -23,7 +23,7 @@ class SlackService {
     });
 
     if (!res.ok) {
-      console.error("Failed to send Slack message", await res.text());
+      console.error("❌ Failed to send Slack message", await res.text());
     }
   }
 
@@ -40,7 +40,7 @@ class SlackService {
     });
 
     if (!res.ok) {
-      console.error("Failed to send Slack object message", await res.text());
+      console.error("❌ Failed to send Slack object message", await res.text());
     }
   }
 }

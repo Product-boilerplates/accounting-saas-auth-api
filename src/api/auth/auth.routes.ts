@@ -35,6 +35,11 @@ export class AuthRoutes extends BaseRoute<AuthController> {
      * POST /auth/signin
      */
     this.router.post(
+      "/admin/signin",
+      validateRequest(authValidator.signin),
+      this.controller.adminSignin,
+    );
+    this.router.post(
       "/signin",
       validateRequest(authValidator.signin),
       this.controller.signin,

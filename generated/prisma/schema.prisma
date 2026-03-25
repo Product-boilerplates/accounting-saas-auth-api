@@ -37,6 +37,7 @@ model User {
 
 enum UserType {
   PLATFORM_ADMIN
+  TENANT_ADMIN
   TENANT_USER
 }
 

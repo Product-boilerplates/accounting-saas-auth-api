@@ -71,6 +71,7 @@ export type AuthOtp = $Result.DefaultSelection<Prisma.$AuthOtpPayload>
 export namespace $Enums {
   export const UserType: {
   PLATFORM_ADMIN: 'PLATFORM_ADMIN',
+  TENANT_ADMIN: 'TENANT_ADMIN',
   TENANT_USER: 'TENANT_USER'
 };
 

@@ -16,6 +16,14 @@ export class AuthController extends BaseController {
     this.sendResponse(res, data);
   });
 
+  adminSignin = this.asyncHandler(async (req: Request, res: Response) => {
+    const { body } = req.validatedData;
+
+    const data = await authService.auth.adminSignin(body);
+
+    this.sendResponse(res, data);
+  });
+
   signin = this.asyncHandler(async (req: Request, res: Response) => {
     const { body } = req.validatedData;
 

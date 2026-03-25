@@ -1,24 +1,120 @@
-<html>
+<html lang="bn">
   <head>
-    <meta charset="utf-8" />
-    <title>Verify Your Email</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      body { font-family: Arial, sans-serif; background: #f8f9fa; color: #333; }
-      .container { background: #fff; padding: 20px 30px; border-radius: 8px;
-      max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px
-      rgba(0,0,0,0.1); } .btn { display: inline-block; margin-top: 20px;
-      background: #007bff; color: white; text-decoration: none; padding: 10px
-      16px; border-radius: 4px; }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background-color: #fafafa;
+        text-align: center;
+        padding: 20px 0;
+      }
+      .header img {
+        width: 150px;
+      }
+      .content {
+        padding: 40px;
+        color: #333333;
+        line-height: 1.6;
+      }
+      .content h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #111111;
+      }
+      .btn-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .btn {
+        background-color: #2da4ff;
+        color: #ffffff !important;
+        padding: 12px 30px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        display: inline-block;
+      }
+      .footer {
+        background-color: #fafafa;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #777777;
+      }
+      .social-icons {
+        margin-bottom: 15px;
+      }
+      .social-icons img {
+        width: 24px;
+        margin: 0 8px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h2>Welcome, {{name}}!</h2>
-      <p>Thanks for signing up. Please verify your email by clicking the button
-        below:</p>
-      <a href="{{verificationLink}}" class="btn">Verify Email</a>
-      <p>If you didn’t request this, please ignore this email.</p>
-      <p>— The Team</p>
+      <div class="header">
+        <img
+          src="https://cdn.dribbble.com/userupload/39447939/file/original-7f106f25b7344a2f97217f11711d4f2b.jpg?resize=400x0"
+          alt="CARBON Logo"
+        />
+      </div>
+
+      <div class="content">
+        <h1>Verify This Email Address</h1>
+        <p>Hi {{name}},</p>
+        <p>Welcome to Carbon!</p>
+        <p>Please click the button below to verify your email address.</p>
+
+        <div class="btn-container">
+          <a href="{{verificationUrl}}" class="btn">Verify Email</a>
+        </div>
+
+        <p>If you did not sign up to Carbon, please ignore this email or contact
+          us at
+          <a href="mailto:support@carbon.money">support@carbon.money</a></p>
+
+        <p>Best regards,<br />
+          <strong>Tom Tompson</strong><br />
+          Carbon Support Team</p>
+      </div>
+
+      <div class="footer">
+        <div class="social-icons">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/124/124021.png"
+            alt="Twitter"
+          />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2111/2111491.png"
+            alt="Medium"
+          />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"
+            alt="Telegram"
+          />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/124/124010.png"
+            alt="Facebook"
+          />
+        </div>
+        <p><strong>Need Support?</strong></p>
+        <p>Feel free to email us if you have any questions, comments or
+          suggestions. We'll be happy to resolve your issues.</p>
+      </div>
     </div>
   </body>
 </html>
